@@ -90,32 +90,54 @@ export const Modal: React.FC<ModalProps> = ({
         aria-hidden="true"
       />
 
+      {/* Floating close button for side panels — sits outside the panel on the overlay */}
+      {isSide && (
+        <button
+          onClick={onClose}
+          className={`
+            relative z-10 self-start mt-4
+            ${position === 'right' ? 'mr-3' : 'order-1 ml-3'}
+            p-2 rounded-full text-gray-300 hover:text-white hover:bg-white/10
+            transition-all duration-300
+            ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}
+          `}
+          aria-label="Close Modal"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+
       {/* Modal Content container */}
       <div 
         ref={containerRef}
         className={`
           relative w-full bg-white shadow-2xl border-gray-100 flex flex-col overflow-hidden
           transition-all duration-300 transform
-          ${isSide ? 'h-full rounded-none' : 'mx-6 rounded-2xl border'}
+          ${isSide ? 'h-full rounded-none max-w-[600px]' : 'mx-6 rounded-2xl border'}
           ${dimensionStyles[dimensions]}
           ${getAnimationClasses()}
           ${className}
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <div className={`flex items-center justify-between px-6 py-4 border-b border-gray-100`}>
           <h2 className={`text-lg font-semibold text-gray-900 leading-none ${!title ? 'opacity-0' : ''}`}>
             {title || 'Modal'}
           </h2>
-          <button 
-            onClick={onClose}
-            className="p-2 -mr-2 rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
-            aria-label="Close Modal"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          {/* Close button inside header only for center/top positions */}
+          {!isSide && (
+            <button 
+              onClick={onClose}
+              className="p-2 -mr-2 rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+              aria-label="Close Modal"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Body */}
