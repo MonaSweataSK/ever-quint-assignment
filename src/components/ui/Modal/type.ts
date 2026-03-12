@@ -1,0 +1,41 @@
+import React from 'react';
+
+export type ModalDimensions = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export type ModalPosition = 'center' | 'top' | 'left' | 'right';
+
+export interface ModalProps {
+  /**
+   * Whether the modal is currently open
+   */
+  isOpen: boolean;
+  /**
+   * Callback when the modal is closed
+   */
+  onClose: () => void;
+  /**
+   * Callback when the modal is opened
+   */
+  onOpen?: () => void;
+  /**
+   * Dimensions of the modal
+   * @default 'md'
+   */
+  dimensions?: ModalDimensions;
+  /**
+   * Vertical position of the modal
+   * @default 'center'
+   */
+  position?: ModalPosition;
+  /**
+   * Modal title
+   */
+  title?: string;
+  /**
+   * Modal content
+   */
+  children: React.ReactNode;
+  /**
+   * Additional CSS classes for the modal container
+   */
+  className?: string;
+}

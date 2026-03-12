@@ -34,4 +34,12 @@ export interface ButtonProps {
    * Icon to display to the right of the label
    */
   rightIcon?: React.ReactNode;
+  /**
+   * Optional click handler
+   */
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  /**
+   * Additional CSS classes
+   */
+  className?: string;
 }

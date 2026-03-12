@@ -1,4 +1,4 @@
-import TagDemo from './components/ui/Tag/TagDemo';
+import ModalDemo from './components/ui/Modal/ModalDemo';
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
       </h1>
 
       <div className="max-w-5xl mx-auto space-y-12">
-        <TagDemo />
+        <ModalDemo />
       </div>
     </div>
   );

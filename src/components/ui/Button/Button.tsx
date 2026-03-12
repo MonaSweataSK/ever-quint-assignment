@@ -13,6 +13,8 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   leftIcon,
   rightIcon,
+  onClick,
+  className = '',
 }) => {
   // Base styles for the button
   const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95';
@@ -32,7 +34,7 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   // Combine styles
-  const combinedClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]}`;
+  const combinedClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;
 
   return (
     <button
@@ -40,6 +42,7 @@ export const Button: React.FC<ButtonProps> = ({
       className={combinedClasses}
       disabled={disabled || loading}
       aria-label={loading ? `Loading ${label}` : label}
+      onClick={onClick}
     >
       {loading ? (
         <svg
