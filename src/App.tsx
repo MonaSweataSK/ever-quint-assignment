@@ -1,4 +1,4 @@
-import ModalDemo from './components/ui/Modal/ModalDemo';
+import BoardDemo from './components/features/Board/BoardDemo';
 
 function App() {
   return (
@@ -7,8 +7,8 @@ function App() {
         Component Library Showcase
       </h1>
 
-      <div className="max-w-5xl mx-auto space-y-12">
-        <ModalDemo />
+      <div className="max-w-7xl mx-auto space-y-12">
+        <BoardDemo />
       </div>
     </div>
   );
