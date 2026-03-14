@@ -1,5 +1,7 @@
 Column will be an empty container which will contain task cards which can be draggable across columns. 
 
+Each column should have a three dot button which will have a context menu of sort by due date and priority ( asending and descending order )
+
 Board will be a container which will contain columns ( Backlog, in progress and Done )
 
 Later functionalities:

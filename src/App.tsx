@@ -1,5 +1,4 @@
-import TaskFormDemo from './components/features/Task/TaskFormDemo';
-import TagEditorDemo from './components/ui/TagEditor/TagEditorDemo';
+import BoardDemo from './components/features/Board/BoardDemo';
 
 function App() {
   return (
@@ -9,8 +8,7 @@ function App() {
       </h1>
 
       <div className="max-w-7xl mx-auto space-y-12">
-        <TaskFormDemo />
-        <TagEditorDemo />
+        <BoardDemo />
       </div>
     </div>
   );
