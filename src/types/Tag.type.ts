@@ -3,6 +3,16 @@
 export type TagVariant = 'primary' | 'success' | 'warning' | 'info' | 'error' | 'gray';
 export type TagSize = 'sm' | 'md' | 'lg';
 
+export interface Tag {
+  id: string;
+  name: string;
+  color?: string; // Hex color
+  description?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+
 export interface TagProps {
   /**
    * The text to display inside the tag
