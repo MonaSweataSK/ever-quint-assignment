@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export interface TagEditorProps {
   /** Array of current tags */

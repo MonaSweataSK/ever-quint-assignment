@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import Board from '../components/features/Board/Board';
-import type { BoardData } from '../components/features/Board/type';
+import type { BoardData } from '../types/Board.type';
 import { TaskSort, type SortCriteria } from '../components/features/Board/TaskSort';
 import { TaskFilter } from '../components/features/Board/TaskFilter';
 import type { SortOrder } from '../components/ui/Sort/Sort';
-import type { TaskPriority, TaskStatus } from '../components/features/Task/type';
+import type { TaskPriority, TaskStatus } from '../types/Task.type';
 import Modal from '../components/ui/Modal/Modal';
 import TaskForm from '../components/features/Task/TaskForm';
-import type { Task } from '../components/features/Task/type';
+import type { Task } from '../types/Task.type';
 
 const initialBoardData: BoardData = {
     tasks: {

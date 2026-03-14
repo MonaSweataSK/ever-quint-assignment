@@ -3,7 +3,7 @@ import Modal from './Modal';
 import Button from '../Button/Button';
 import Select from '../Select/Select';
 import Input from '../Input/Input';
-import type { ModalDimensions, ModalPosition } from './type';
+import type { ModalDimensions, ModalPosition } from '../../../types/Modal.type';
 
 type ModalContent = 'default' | 'task';
 

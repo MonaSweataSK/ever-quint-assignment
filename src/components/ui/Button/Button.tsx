@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ButtonProps } from './type';
+import type { ButtonProps } from '../../../types/Button.type';
 
 /**
  * A highly reusable and customizable Button component.

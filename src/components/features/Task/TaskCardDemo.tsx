@@ -1,6 +1,6 @@
 import React from 'react';
 import TaskCard from './TaskCard';
-import type { TaskPriority } from './type';
+import type { TaskPriority } from '../../../types/Task.type';
 
 /** Sample task data for the demo */
 const sampleTasks: {

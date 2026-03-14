@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TaskCardProps, TaskPriority } from './type';
+import type { TaskCardProps, TaskPriority } from '../../../types/Task.type';
 import Tag from '../../ui/Tag/Tag';
 
 /**

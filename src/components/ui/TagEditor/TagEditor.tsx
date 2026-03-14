@@ -1,5 +1,5 @@
 import React, { useState, useRef, type KeyboardEvent } from 'react';
-import type { TagEditorProps } from './type';
+import type { TagEditorProps } from '../../../types/TagEditor.type';
 
 /**
  * A premium Tag Editor component.

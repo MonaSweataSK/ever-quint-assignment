@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { ToastProps } from './type';
+import type { ToastProps } from '../../../types/Toast.type';
 
 /**
  * A premium Toast component for ephemeral notifications.

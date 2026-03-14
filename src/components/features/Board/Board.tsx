@@ -1,9 +1,9 @@
 import React from 'react';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import Column from './Column';
-import type { BoardData } from './type';
+import type { BoardData } from '../../../types/Board.type';
 
-import type { TaskPriority, TaskStatus } from '../Task/type';
+import type { TaskPriority, TaskStatus } from '../../../types/Task.type';
 
 interface BoardProps {
   data: BoardData;

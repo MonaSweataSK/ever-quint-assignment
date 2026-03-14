@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Toast from './Toast';
 import Button from '../Button/Button';
-import type { ToastVariant, ToastPosition } from './type';
+import type { ToastVariant, ToastPosition } from '../../../types/Toast.type';
 
 export const ToastDemo: React.FC = () => {
   const [activeToasts, setActiveToasts] = useState<Array<{ id: number; text: string; variant: ToastVariant; position: ToastPosition }>>([]);

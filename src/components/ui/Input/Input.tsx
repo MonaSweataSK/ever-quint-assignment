@@ -1,5 +1,5 @@
 import React from 'react';
-import type { InputProps } from './type';
+import type { InputProps } from '../../../types/Input.type';
 
 /**
  * A generic and robust Input component.

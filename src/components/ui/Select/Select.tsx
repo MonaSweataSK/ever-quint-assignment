@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import Input from '../Input/Input';
-import type { SelectProps, SelectOption } from './type';
+import type { SelectProps, SelectOption } from '../../../types/Select.type';
 
 /**
  * A custom Select component with support for searching, icons, and validation.

@@ -1,6 +1,6 @@
 import React from 'react';
 import Board from './Board';
-import type { BoardData } from './type';
+import type { BoardData } from '../../../types/Board.type';
 
 const initialBoardData: BoardData = {
   tasks: {

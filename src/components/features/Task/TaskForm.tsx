@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Task, TaskStatus, TaskPriority } from './type';
+import type { Task, TaskStatus, TaskPriority } from '../../../types/Task.type';
 import Input from '../../ui/Input/Input';
 import Select from '../../ui/Select/Select';
 import Button from '../../ui/Button/Button';

@@ -1,4 +1,4 @@
-import type { Task } from '../Task/type';
+import type { Task } from './Task.type';
 
 export interface BoardColumn {
   id: string;

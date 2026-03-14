@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TaskForm from './TaskForm';
 import Modal from '../../ui/Modal/Modal';
 import Button from '../../ui/Button/Button';
-import type { Task } from './type';
+import type { Task } from '../../../types/Task.type';
 
 const TaskFormDemo: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

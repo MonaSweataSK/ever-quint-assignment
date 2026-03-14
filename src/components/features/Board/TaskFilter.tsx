@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import TagEditor from '../../ui/TagEditor/TagEditor';
-import type { TaskPriority, TaskStatus } from '../Task/type';
+
+import type { TaskPriority, TaskStatus } from '../../../types/Task.type';
 
 interface TaskFilterProps {
   selectedPriorities: TaskPriority[];

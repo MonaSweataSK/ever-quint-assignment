@@ -46,7 +46,15 @@ select (button and text)
 
 Types
 we are going to keep types in two places - types specific to component will be kept inside the same component folder,
-types which are used in multiple places will be kept in shared/types
+types which are used in multiple places will be kept in shared/types 
 
+
+DB ( indexed DB )
+We need to store records of data. also retrieve them efficiently ( tasks, assignees, tags)
+
+
+State management -
+ We will use Zustand for this as it is simpler to use than Redux. 
+ We will use helpers for state management and DB management
 
  

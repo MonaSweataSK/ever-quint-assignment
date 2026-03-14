@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TagProps } from './type';
+import type { TagProps } from '../../../types/Tag.type';
 
 /**
  * A versatile Tag/Badge component for categorization and status display.

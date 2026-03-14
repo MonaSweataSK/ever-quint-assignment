@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { type ModalProps, type ModalPosition } from './type';
+import { type ModalProps, type ModalPosition } from '../../../types/Modal.type';
 
 /**
  * A highly customizable and accessible Modal component.
