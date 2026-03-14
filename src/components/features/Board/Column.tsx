@@ -9,6 +9,7 @@ interface ColumnProps {
   columnId: string;
   title: string;
   tasks: Task[];
+  onTaskClick?: (taskId: string) => void;
 }
 
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
@@ -17,7 +18,7 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
   low: 1,
 };
 
-export const Column: React.FC<ColumnProps> = ({ columnId, title, tasks }) => {
+export const Column: React.FC<ColumnProps> = ({ columnId, title, tasks, onTaskClick }) => {
   const [sortConfig, setSortConfig] = useState<{ criteria: SortCriteria | null; order: SortOrder }>({
     criteria: null,
     order: 'asc',
@@ -93,7 +94,7 @@ export const Column: React.FC<ColumnProps> = ({ columnId, title, tasks }) => {
                     }}
                     className={`${snapshot.isDragging ? 'z-50 shadow-xl scale-[1.02]' : ''}`}
                   >
-                    <TaskCard {...task} />
+                    <TaskCard {...task} onClick={onTaskClick} />
                   </div>
                 )}
               </Draggable>

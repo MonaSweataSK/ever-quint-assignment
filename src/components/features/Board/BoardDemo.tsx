@@ -96,7 +96,8 @@ export const BoardDemo: React.FC = () => {
       </div>
 
       <Board 
-        initialData={initialBoardData} 
+        data={initialBoardData} 
+        onDataChange={() => {}}
         searchQuery="" 
         selectedPriorities={[]}
         selectedStatuses={[]}

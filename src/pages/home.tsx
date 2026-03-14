@@ -5,6 +5,9 @@ import { TaskSort, type SortCriteria } from '../components/features/Board/TaskSo
 import { TaskFilter } from '../components/features/Board/TaskFilter';
 import type { SortOrder } from '../components/ui/Sort/Sort';
 import type { TaskPriority, TaskStatus } from '../components/features/Task/type';
+import Modal from '../components/ui/Modal/Modal';
+import TaskForm from '../components/features/Task/TaskForm';
+import type { Task } from '../components/features/Task/type';
 
 const initialBoardData: BoardData = {
     tasks: {
@@ -90,13 +93,142 @@ const initialBoardData: BoardData = {
 };
 
 const Home: React.FC = () => {
+    const [boardData, setBoardData] = useState<BoardData>(initialBoardData);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([]);
     const [selectedStatuses, setSelectedStatuses] = useState<TaskStatus[]>([]);
+    const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
+    const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [sortConfig, setSortConfig] = useState<{ criteria: SortCriteria | null; order: SortOrder }>({
         criteria: null,
         order: 'asc',
     });
+
+    const handleTaskClick = (taskId: string) => {
+        setSelectedTaskId(taskId);
+        setIsEditing(false);
+        setIsViewModalOpen(true);
+    };
+
+    const handleUpdateTask = (updatedTaskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+        if (!selectedTaskId) return;
+
+        const oldTask = boardData.tasks[selectedTaskId];
+        const now = new Date();
+        const updatedTask: Task = {
+            ...oldTask,
+            ...updatedTaskData,
+            updatedAt: now,
+        };
+
+        setBoardData((prev: BoardData) => {
+            const newTasks = {
+                ...prev.tasks,
+                [selectedTaskId]: updatedTask,
+            };
+
+            let newColumns = { ...prev.columns };
+
+            // If status changed, move task between columns
+            if (oldTask.status !== updatedTaskData.status) {
+                // Remove from old column
+                const oldColumnId = Object.keys(prev.columns).find(key => 
+                    prev.columns[key].taskIds.includes(selectedTaskId)
+                );
+                
+                if (oldColumnId) {
+                    newColumns[oldColumnId] = {
+                        ...prev.columns[oldColumnId],
+                        taskIds: prev.columns[oldColumnId].taskIds.filter(id => id !== selectedTaskId),
+                    };
+                }
+
+                // Add to new column (usually the name matches status id in this setup)
+                const newColumnId = updatedTaskData.status;
+                if (newColumns[newColumnId]) {
+                    newColumns[newColumnId] = {
+                        ...newColumns[newColumnId],
+                        taskIds: [...newColumns[newColumnId].taskIds, selectedTaskId],
+                    };
+                }
+            }
+
+            return {
+                ...prev,
+                tasks: newTasks,
+                columns: newColumns,
+            };
+        });
+
+        setIsEditing(false);
+        setIsViewModalOpen(false);
+    };
+
+    const handleDeleteTask = () => {
+        if (!selectedTaskId) return;
+        
+        if (window.confirm('Are you sure you want to delete this task?')) {
+            setBoardData((prev: BoardData) => {
+                const newTasks = { ...prev.tasks };
+                delete newTasks[selectedTaskId];
+
+                const newColumns = { ...prev.columns };
+                const columnId = Object.keys(prev.columns).find(key => 
+                    prev.columns[key].taskIds.includes(selectedTaskId)
+                );
+
+                if (columnId) {
+                    newColumns[columnId] = {
+                        ...prev.columns[columnId],
+                        taskIds: prev.columns[columnId].taskIds.filter(id => id !== selectedTaskId),
+                    };
+                }
+
+                return {
+                    ...prev,
+                    tasks: newTasks,
+                    columns: newColumns,
+                };
+            });
+
+            setIsViewModalOpen(false);
+            setSelectedTaskId(null);
+        }
+    };
+
+    const handleCreateTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+        const taskId = `task-${Date.now()}`;
+        const now = new Date();
+        
+        const newTask: Task = {
+            ...taskData,
+            id: taskId,
+            createdAt: now,
+            updatedAt: now,
+        };
+
+        const firstColumnId = boardData.columnOrder[0];
+        const firstColumn = boardData.columns[firstColumnId];
+
+        setBoardData((prev: BoardData) => ({
+            ...prev,
+            tasks: {
+                ...prev.tasks,
+                [taskId]: newTask,
+            },
+            columns: {
+                ...prev.columns,
+                [firstColumnId]: {
+                    ...firstColumn,
+                    taskIds: [...firstColumn.taskIds, taskId],
+                },
+            },
+        }));
+
+        setIsNewTaskModalOpen(false);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
@@ -174,7 +306,10 @@ const Home: React.FC = () => {
                             )}
                         />
 
-                        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/25 active:scale-95 flex items-center gap-2 group">
+                        <button 
+                            onClick={() => setIsNewTaskModalOpen(true)}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/25 active:scale-95 flex items-center gap-2 group"
+                        >
                             <svg className="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
@@ -187,12 +322,73 @@ const Home: React.FC = () => {
             {/* Main Content Area */}
             <main className="max-w-7xl mx-auto p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <Board 
-                    initialData={initialBoardData} 
+                    data={boardData}
+                    onDataChange={setBoardData}
                     searchQuery={searchQuery}
                     selectedPriorities={selectedPriorities}
                     selectedStatuses={selectedStatuses}
+                    onTaskClick={handleTaskClick}
                 />
             </main>
+
+            <Modal
+                isOpen={isNewTaskModalOpen}
+                onClose={() => setIsNewTaskModalOpen(false)}
+                title="Create New Task"
+                position="right"
+                dimensions="md"
+            >
+                <TaskForm 
+                    onSubmit={handleCreateTask}
+                    onCancel={() => setIsNewTaskModalOpen(false)}
+                />
+            </Modal>
+
+            <Modal
+                isOpen={isViewModalOpen}
+                onClose={() => {
+                    setIsViewModalOpen(false);
+                    setSelectedTaskId(null);
+                    setIsEditing(false);
+                }}
+                title={isEditing ? 'Edit Task' : 'Task Details'}
+                position="right"
+                dimensions="md"
+                headerActions={
+                    <div className="flex items-center gap-2 pr-4">
+                        {!isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                                <span>Edit</span>
+                            </button>
+                        )}
+                        <button
+                            onClick={handleDeleteTask}
+                            disabled={isEditing}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-600 rounded-lg transition-colors ${isEditing ? 'opacity-40 cursor-not-allowed bg-transparent' : 'hover:bg-rose-50'}`}
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                }
+            >
+                {selectedTaskId && boardData.tasks[selectedTaskId] && (
+                    <TaskForm 
+                        initialTask={boardData.tasks[selectedTaskId]}
+                        onSubmit={handleUpdateTask}
+                        onCancel={() => setIsEditing(false)}
+                        isEditing={isEditing}
+                    />
+                )}
+            </Modal>
         </div>
     );
 };

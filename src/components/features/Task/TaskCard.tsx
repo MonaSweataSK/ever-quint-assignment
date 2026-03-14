@@ -42,6 +42,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   tags,
   updatedAt,
   className = '',
+  onClick,
 }) => {
   const priorityInfo = priorityConfig[priority];
   const initials = assignee
@@ -54,11 +55,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   return (
     <article
       id={`task-card-${id}`}
+      onClick={() => onClick?.(id)}
       className={`
         group bg-white rounded-xl border border-gray-200 shadow-sm
         hover:shadow-md hover:-translate-y-0.5
         transition-all duration-200 ease-out
-        p-4 flex flex-col gap-3
+        p-4 flex flex-col gap-3 cursor-pointer
         ${className}
       `}
     >

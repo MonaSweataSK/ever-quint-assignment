@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import Column from './Column';
 import type { BoardData } from './type';
@@ -6,19 +6,22 @@ import type { BoardData } from './type';
 import type { TaskPriority, TaskStatus } from '../Task/type';
 
 interface BoardProps {
-  initialData: BoardData;
+  data: BoardData;
+  onDataChange: (newData: BoardData) => void;
   searchQuery: string;
   selectedPriorities: TaskPriority[];
   selectedStatuses: TaskStatus[];
+  onTaskClick?: (taskId: string) => void;
 }
 
 export const Board: React.FC<BoardProps> = ({ 
-  initialData, 
+  data,
+  onDataChange,
   searchQuery,
   selectedPriorities,
-  selectedStatuses
+  selectedStatuses,
+  onTaskClick
 }) => {
-  const [data, setData] = useState<BoardData>(initialData);
 
   const onDragEnd = (result: DropResult) => {
     // ... same onDragEnd implementation ...
@@ -55,7 +58,7 @@ export const Board: React.FC<BoardProps> = ({
         },
       };
 
-      setData(newState);
+      onDataChange(newState);
       return;
     }
 
@@ -83,7 +86,7 @@ export const Board: React.FC<BoardProps> = ({
       },
     };
 
-    setData(newState);
+    onDataChange(newState);
   };
 
   return (
@@ -117,6 +120,7 @@ export const Board: React.FC<BoardProps> = ({
               columnId={column.id}
               title={column.title}
               tasks={tasks}
+              onTaskClick={onTaskClick}
             />
           );
         })}
