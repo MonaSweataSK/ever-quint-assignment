@@ -12,3 +12,7 @@ Body:
 
 Modal: 
    - Task Form
+
+Functionalities
+Search - Search only by title and description
+Filter - Filter by priority and status( using tag editor for selecting multiple items )

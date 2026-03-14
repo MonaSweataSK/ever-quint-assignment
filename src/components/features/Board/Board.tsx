@@ -3,14 +3,25 @@ import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import Column from './Column';
 import type { BoardData } from './type';
 
+import type { TaskPriority, TaskStatus } from '../Task/type';
+
 interface BoardProps {
   initialData: BoardData;
+  searchQuery: string;
+  selectedPriorities: TaskPriority[];
+  selectedStatuses: TaskStatus[];
 }
 
-export const Board: React.FC<BoardProps> = ({ initialData }) => {
+export const Board: React.FC<BoardProps> = ({ 
+  initialData, 
+  searchQuery,
+  selectedPriorities,
+  selectedStatuses
+}) => {
   const [data, setData] = useState<BoardData>(initialData);
 
   const onDragEnd = (result: DropResult) => {
+    // ... same onDragEnd implementation ...
     const { destination, source, draggableId } = result;
 
     if (!destination) return;
@@ -80,7 +91,25 @@ export const Board: React.FC<BoardProps> = ({ initialData }) => {
       <div className="flex gap-6 overflow-x-auto pb-8 min-h-[600px] scrollbar-hide">
         {data.columnOrder.map((columnId) => {
           const column = data.columns[columnId];
-          const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
+          const tasks = column.taskIds
+            .map((taskId) => data.tasks[taskId])
+            .filter((task) => {
+              // Search filtering
+              const query = searchQuery.toLowerCase().trim();
+              const matchesSearch = !query || 
+                task.title.toLowerCase().includes(query) ||
+                task.description.toLowerCase().includes(query);
+
+              // Priority filtering
+              const matchesPriority = selectedPriorities.length === 0 || 
+                selectedPriorities.includes(task.priority);
+
+              // Status filtering
+              const matchesStatus = selectedStatuses.length === 0 || 
+                selectedStatuses.includes(task.status);
+
+              return matchesSearch && matchesPriority && matchesStatus;
+            });
 
           return (
             <Column

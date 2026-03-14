@@ -95,7 +95,12 @@ export const BoardDemo: React.FC = () => {
         </p>
       </div>
 
-      <Board initialData={initialBoardData} />
+      <Board 
+        initialData={initialBoardData} 
+        searchQuery="" 
+        selectedPriorities={[]}
+        selectedStatuses={[]}
+      />
     </section>
   );
 };
