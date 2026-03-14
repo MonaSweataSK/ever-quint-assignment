@@ -35,6 +35,15 @@ export interface ModalProps {
    */
   children: React.ReactNode;
   /**
+   * Additional actions to render in the header
+   */
+  headerActions?: React.ReactNode;
+  /**
+   * Whether to remove default padding from the modal body
+   * @default false
+   */
+  noPadding?: boolean;
+  /**
    * Additional CSS classes for the modal container
    */
   className?: string;

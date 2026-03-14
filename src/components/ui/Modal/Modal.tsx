@@ -12,6 +12,8 @@ export const Modal: React.FC<ModalProps> = ({
   dimensions = 'md',
   position = 'center',
   title,
+  headerActions,
+  noPadding = false,
   children,
   className = '',
 }) => {
@@ -126,22 +128,25 @@ export const Modal: React.FC<ModalProps> = ({
           <h2 className={`text-lg font-semibold text-gray-900 leading-none ${!title ? 'opacity-0' : ''}`}>
             {title || 'Modal'}
           </h2>
-          {/* Close button inside header only for center/top positions */}
-          {!isSide && (
-            <button 
-              onClick={onClose}
-              className="p-2 -mr-2 rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
-              aria-label="Close Modal"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {headerActions}
+            {/* Close button inside header only for center/top positions */}
+            {!isSide && (
+              <button 
+                onClick={onClose}
+                className="p-2 -mr-2 rounded-full text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+                aria-label="Close Modal"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Body */}
-        <div className="flex-1 p-6 overflow-y-auto min-h-0">
+        <div className={`flex-1 overflow-y-auto min-h-0 ${noPadding ? '' : 'p-6'}`}>
           {children}
         </div>
       </div>
