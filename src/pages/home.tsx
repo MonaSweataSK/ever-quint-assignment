@@ -8,6 +8,8 @@ import type { TaskPriority, TaskStatus } from '../types/Task.type';
 import Modal from '../components/ui/Modal/Modal';
 import TaskForm from '../components/features/Task/TaskForm';
 import type { Task } from '../types/Task.type';
+import { COLUMNS } from '../constants/board';
+import type { BoardColumn } from '../types/Board.type';
 
 const initialBoardData: BoardData = {
     tasks: {
@@ -72,24 +74,28 @@ const initialBoardData: BoardData = {
             tags: ['DevOps'],
         },
     },
-    columns: {
-        'backlog': {
-            id: 'backlog',
-            title: 'Backlog',
-            taskIds: ['task-1', 'task-2'],
-        },
-        'in-progress': {
-            id: 'in-progress',
-            title: 'In Progress',
-            taskIds: ['task-3', 'task-4'],
-        },
-        'done': {
-            id: 'done',
-            title: 'Done',
-            taskIds: ['task-5'],
-        },
-    },
-    columnOrder: ['backlog', 'in-progress', 'done'],
+    columns: COLUMNS.reduce((acc, col) => {
+        acc[col.id] = {
+            id: col.id,
+            title: col.title,
+            taskIds: Object.values({
+                'task-1': 'todo',
+                'task-2': 'todo',
+                'task-3': 'in-progress',
+                'task-4': 'in-progress',
+                'task-5': 'done'
+            }).reduce((ids: string[], status, idx) => {
+                const taskId = `task-${idx + 1}`;
+                // Map status to column ID (they are the same in this case)
+                if (status === col.id || (status === 'todo' && col.id === 'backlog')) {
+                    ids.push(taskId);
+                }
+                return ids;
+            }, [])
+        };
+        return acc;
+    }, {} as Record<string, BoardColumn>),
+    columnOrder: COLUMNS.map(col => col.id),
 };
 
 const Home: React.FC = () => {
