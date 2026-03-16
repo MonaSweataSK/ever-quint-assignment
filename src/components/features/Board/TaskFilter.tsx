@@ -11,8 +11,7 @@ interface TaskFilterProps {
   className?: string;
 }
 
-const PRIORITY_OPTIONS = ['high', 'medium', 'low'] as const;
-const STATUS_OPTIONS = ['todo', 'in-progress', 'done'] as const;
+import { FILTER_PRIORITY_OPTIONS, FILTER_STATUS_OPTIONS } from '../../../constants/board';
 
 export const TaskFilter: React.FC<TaskFilterProps> = ({
   selectedPriorities,

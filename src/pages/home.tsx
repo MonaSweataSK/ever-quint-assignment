@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Board from '../components/features/Board/Board';
 import type { BoardData } from '../types/Board.type';
-import { TaskSort, type SortCriteria } from '../components/features/Board/TaskSort';
+import { TaskSort } from '../components/features/Board/TaskSort';
+import type { SortCriteria } from '../constants/board';
 import { TaskFilter } from '../components/features/Board/TaskFilter';
 import type { SortOrder } from '../components/ui/Sort/Sort';
 import type { TaskPriority, TaskStatus } from '../types/Task.type';

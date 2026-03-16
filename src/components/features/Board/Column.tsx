@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import TaskCard from '../Task/TaskCard';
 import type { Task, TaskPriority } from '../../../types/Task.type';
-import { TaskSort, type SortCriteria } from './TaskSort';
+import type { SortCriteria } from '../../../constants/board';
+import { TaskSort } from './TaskSort';
 import type { SortOrder } from '../../ui/Sort/Sort';
 
 interface ColumnProps {
