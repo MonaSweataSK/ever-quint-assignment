@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Droppable, Draggable } from '@hello-pangea/dnd';
 import TaskCard from '../Task/TaskCard';
 import type { Task, TaskPriority } from '../../../types/Task.type';
@@ -11,6 +11,10 @@ interface ColumnProps {
   title: string;
   tasks: Task[];
   onTaskClick?: (taskId: string) => void;
+  globalSortCriteria: SortCriteria | null;
+  globalSortOrder: SortOrder;
+  globalSortVersion: number;
+  onColumnSortApplied?: () => void;
 }
 
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
@@ -19,26 +23,46 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
   low: 1,
 };
 
-export const Column: React.FC<ColumnProps> = ({ columnId, title, tasks, onTaskClick }) => {
-  const [sortConfig, setSortConfig] = useState<{ criteria: SortCriteria | null; order: SortOrder }>({
-    criteria: null,
-    order: 'asc',
-  });
+export const Column: React.FC<ColumnProps> = ({
+  columnId, title, tasks, onTaskClick,
+  globalSortCriteria, globalSortOrder, globalSortVersion,
+  onColumnSortApplied
+}) => {
+  // Local column-level override (null = follow global)
+  const [localSort, setLocalSort] = useState<{ criteria: SortCriteria | null; order: SortOrder } | null>(null);
+
+  useEffect(() => {
+    // Whenever a new global sort interaction happens, reset local overrides
+    setLocalSort(null);
+  }, [globalSortVersion]);
+
+  // Effective sort: local override wins, otherwise global
+  const effectiveCriteria = localSort ? localSort.criteria : globalSortCriteria;
+  const effectiveOrder = localSort ? localSort.order : globalSortOrder;
 
   const sortedTasks = useMemo(() => {
-    if (!sortConfig.criteria) return tasks;
+    if (!effectiveCriteria) return tasks;
 
     return [...tasks].sort((a, b) => {
       let comparison = 0;
-      if (sortConfig.criteria === 'dueDate') {
+      if (effectiveCriteria === 'dueDate') {
         comparison = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-      } else if (sortConfig.criteria === 'priority') {
+      } else if (effectiveCriteria === 'priority') {
         comparison = PRIORITY_WEIGHT[a.priority] - PRIORITY_WEIGHT[b.priority];
       }
 
-      return sortConfig.order === 'asc' ? comparison : -comparison;
+      return effectiveOrder === 'asc' ? comparison : -comparison;
     });
-  }, [tasks, sortConfig]);
+  }, [tasks, effectiveCriteria, effectiveOrder]);
+
+  const handleColumnSort = (criteria: SortCriteria, order: SortOrder) => {
+    setLocalSort({ criteria, order });
+    onColumnSortApplied?.();
+  };
+
+  const handleClearColumnSort = () => {
+    setLocalSort(null);
+  };
 
   return (
     <div className="flex flex-col w-80 bg-gray-50/50 rounded-2xl border border-gray-100 min-h-[500px]">
@@ -54,10 +78,10 @@ export const Column: React.FC<ColumnProps> = ({ columnId, title, tasks, onTaskCl
         </div>
         
         <TaskSort 
-          currentCriteria={sortConfig.criteria}
-          currentOrder={sortConfig.order}
-          onSort={(criteria, order) => setSortConfig({ criteria, order })}
-          onClear={() => setSortConfig({ criteria: null, order: 'asc' })}
+          currentCriteria={localSort ? localSort.criteria : effectiveCriteria}
+          currentOrder={localSort ? localSort.order : effectiveOrder}
+          onSort={handleColumnSort}
+          onClear={handleClearColumnSort}
           title="Sort By"
           renderTrigger={(isOpen) => (
             <button 

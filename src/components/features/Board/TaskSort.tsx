@@ -1,5 +1,5 @@
 import React from 'react';
-import Sort, { type SortOption, type SortOrder } from '../../ui/Sort/Sort';
+import Sort, { type SortOrder } from '../../ui/Sort/Sort';
 
 import { type SortCriteria, SORT_OPTIONS_CONFIG } from '../../../constants/board';
 

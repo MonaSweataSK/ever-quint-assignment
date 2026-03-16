@@ -108,10 +108,21 @@ const Home: React.FC = () => {
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [sortConfig, setSortConfig] = useState<{ criteria: SortCriteria | null; order: SortOrder }>({
+    const [globalSort, setGlobalSort] = useState<{ criteria: SortCriteria | null; order: SortOrder; version: number }>({
         criteria: null,
         order: 'asc',
+        version: 0,
     });
+    const [isGlobalIndicatorActive, setIsGlobalIndicatorActive] = useState(false);
+
+    const handleGlobalSort = (criteria: SortCriteria, order: SortOrder) => {
+        setGlobalSort(prev => ({ criteria, order, version: prev.version + 1 }));
+        setIsGlobalIndicatorActive(true);
+    };
+
+    const handleColumnSortApplied = () => {
+        setIsGlobalIndicatorActive(false);
+    };
 
     const handleTaskClick = (taskId: string) => {
         setSelectedTaskId(taskId);
@@ -293,10 +304,13 @@ const Home: React.FC = () => {
                             }}
                         />
                         <TaskSort 
-                            currentCriteria={sortConfig.criteria}
-                            currentOrder={sortConfig.order}
-                            onSort={(criteria, order) => setSortConfig({ criteria, order })}
-                            onClear={() => setSortConfig({ criteria: null, order: 'asc' })}
+                            currentCriteria={isGlobalIndicatorActive ? globalSort.criteria : null}
+                            currentOrder={globalSort.order}
+                            onSort={handleGlobalSort}
+                            onClear={() => {
+                                setGlobalSort(prev => ({ criteria: null, order: 'asc', version: prev.version + 1 }));
+                                setIsGlobalIndicatorActive(false);
+                            }}
                             title="Global Sort"
                             renderTrigger={(isOpen) => (
                                 <button 
@@ -335,6 +349,10 @@ const Home: React.FC = () => {
                     selectedPriorities={selectedPriorities}
                     selectedStatuses={selectedStatuses}
                     onTaskClick={handleTaskClick}
+                    globalSortCriteria={globalSort.criteria}
+                    globalSortOrder={globalSort.order}
+                    globalSortVersion={globalSort.version}
+                    onColumnSortApplied={handleColumnSortApplied}
                 />
             </main>
 

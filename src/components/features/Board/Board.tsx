@@ -4,6 +4,8 @@ import Column from './Column';
 import type { BoardData } from '../../../types/Board.type';
 
 import type { TaskPriority, TaskStatus } from '../../../types/Task.type';
+import type { SortCriteria } from '../../../constants/board';
+import type { SortOrder } from '../../ui/Sort/Sort';
 
 interface BoardProps {
   data: BoardData;
@@ -12,6 +14,10 @@ interface BoardProps {
   selectedPriorities: TaskPriority[];
   selectedStatuses: TaskStatus[];
   onTaskClick?: (taskId: string) => void;
+  globalSortCriteria: SortCriteria | null;
+  globalSortOrder: SortOrder;
+  globalSortVersion: number;
+  onColumnSortApplied?: () => void;
 }
 
 export const Board: React.FC<BoardProps> = ({ 
@@ -20,7 +26,11 @@ export const Board: React.FC<BoardProps> = ({
   searchQuery,
   selectedPriorities,
   selectedStatuses,
-  onTaskClick
+  onTaskClick,
+  globalSortCriteria,
+  globalSortOrder,
+  globalSortVersion,
+  onColumnSortApplied
 }) => {
 
   const onDragEnd = (result: DropResult) => {
@@ -121,6 +131,10 @@ export const Board: React.FC<BoardProps> = ({
               title={column.title}
               tasks={tasks}
               onTaskClick={onTaskClick}
+              globalSortCriteria={globalSortCriteria}
+              globalSortOrder={globalSortOrder}
+              globalSortVersion={globalSortVersion}
+              onColumnSortApplied={onColumnSortApplied}
             />
           );
         })}

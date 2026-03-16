@@ -78,7 +78,7 @@ export const TaskFilter: React.FC<TaskFilterProps> = ({
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Priority</label>
               <div className="flex flex-wrap gap-2">
-                {PRIORITY_OPTIONS.map((p) => (
+                {FILTER_PRIORITY_OPTIONS.map((p) => (
                   <button
                     key={p}
                     onClick={() => {
@@ -103,7 +103,7 @@ export const TaskFilter: React.FC<TaskFilterProps> = ({
             <div className="space-y-2">
               <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Status</label>
               <div className="flex flex-wrap gap-2">
-                {STATUS_OPTIONS.map((s) => (
+                {FILTER_STATUS_OPTIONS.map((s) => (
                   <button
                     key={s}
                     onClick={() => {
