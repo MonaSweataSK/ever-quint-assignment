@@ -9,7 +9,7 @@ import type { SortOrder } from '../../ui/Sort/Sort';
 
 interface BoardProps {
   data: BoardData;
-  onDataChange: (newData: BoardData) => void;
+  onDragEnd: (result: DropResult) => void;
   searchQuery: string;
   selectedPriorities: TaskPriority[];
   selectedStatuses: TaskStatus[];
@@ -22,7 +22,7 @@ interface BoardProps {
 
 export const Board: React.FC<BoardProps> = ({ 
   data,
-  onDataChange,
+  onDragEnd,
   searchQuery,
   selectedPriorities,
   selectedStatuses,
@@ -32,72 +32,6 @@ export const Board: React.FC<BoardProps> = ({
   globalSortVersion,
   onColumnSortApplied
 }) => {
-
-  const onDragEnd = (result: DropResult) => {
-    // ... same onDragEnd implementation ...
-    const { destination, source, draggableId } = result;
-
-    if (!destination) return;
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    const startColumn = data.columns[source.droppableId];
-    const finishColumn = data.columns[destination.droppableId];
-
-    // Moving within the same column
-    if (startColumn === finishColumn) {
-      const newTaskIds = Array.from(startColumn.taskIds);
-      newTaskIds.splice(source.index, 1);
-      newTaskIds.splice(destination.index, 0, draggableId);
-
-      const newColumn = {
-        ...startColumn,
-        taskIds: newTaskIds,
-      };
-
-      const newState = {
-        ...data,
-        columns: {
-          ...data.columns,
-          [newColumn.id]: newColumn,
-        },
-      };
-
-      onDataChange(newState);
-      return;
-    }
-
-    // Moving from one column to another
-    const startTaskIds = Array.from(startColumn.taskIds);
-    startTaskIds.splice(source.index, 1);
-    const newStart = {
-      ...startColumn,
-      taskIds: startTaskIds,
-    };
-
-    const finishTaskIds = Array.from(finishColumn.taskIds);
-    finishTaskIds.splice(destination.index, 0, draggableId);
-    const newFinish = {
-      ...finishColumn,
-      taskIds: finishTaskIds,
-    };
-
-    const newState = {
-      ...data,
-      columns: {
-        ...data.columns,
-        [newStart.id]: newStart,
-        [newFinish.id]: newFinish,
-      },
-    };
-
-    onDataChange(newState);
-  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
