@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Board from '../components/features/Board/Board';
 import type { BoardData } from '../types/Board.type';
 import { TaskSort } from '../components/features/Board/TaskSort';
@@ -9,98 +9,11 @@ import type { TaskPriority, TaskStatus } from '../types/Task.type';
 import Modal from '../components/ui/Modal/Modal';
 import TaskForm from '../components/features/Task/TaskForm';
 import type { Task } from '../types/Task.type';
-import { COLUMNS } from '../constants/board';
-import type { BoardColumn } from '../types/Board.type';
-
-const initialBoardData: BoardData = {
-    tasks: {
-        'task-1': {
-            id: 'task-1',
-            title: 'Setup Project Boilerplate',
-            description: 'Initialize Vite project and install basic dependencies.',
-            status: 'todo',
-            priority: 'high',
-            dueDate: new Date(),
-            assignee: 'Ram',
-            createdAt: new Date(),
-            updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2h ago
-            tags: ['Project', 'Setup'],
-        },
-        'task-2': {
-            id: 'task-2',
-            title: 'Design System Documentation',
-            description: 'Document the design tokens and components.',
-            status: 'todo',
-            priority: 'medium',
-            dueDate: new Date(),
-            assignee: 'Mona',
-            createdAt: new Date(),
-            updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1d ago
-            tags: ['Design', 'Docs'],
-        },
-        'task-3': {
-            id: 'task-3',
-            title: 'Implement Auth Flow',
-            description: 'Basic login and register screens.',
-            status: 'in-progress',
-            priority: 'high',
-            dueDate: new Date(),
-            assignee: 'Shruthi',
-            createdAt: new Date(),
-            updatedAt: new Date(Date.now() - 1000 * 60 * 45), // 45m ago
-            tags: ['Auth', 'Frontend'],
-        },
-        'task-4': {
-            id: 'task-4',
-            title: 'Database Schema Design',
-            description: 'Plan the relational structure for the backend.',
-            status: 'in-progress',
-            priority: 'medium',
-            dueDate: new Date(),
-            assignee: 'Preetha',
-            createdAt: new Date(),
-            updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5h ago
-            tags: ['Backend', 'Database'],
-        },
-        'task-5': {
-            id: 'task-5',
-            title: 'Finalize Deployment Pipeline',
-            description: 'Configure CI/CD workflows and automated runs.',
-            status: 'done',
-            priority: 'low',
-            dueDate: new Date(),
-            assignee: 'Ram',
-            createdAt: new Date(),
-            updatedAt: new Date(Date.now() - 1000 * 60 * 15), // 15m ago
-            tags: ['DevOps'],
-        },
-    },
-    columns: COLUMNS.reduce((acc, col) => {
-        acc[col.id] = {
-            id: col.id,
-            title: col.title,
-            taskIds: Object.values({
-                'task-1': 'todo',
-                'task-2': 'todo',
-                'task-3': 'in-progress',
-                'task-4': 'in-progress',
-                'task-5': 'done'
-            }).reduce((ids: string[], status, idx) => {
-                const taskId = `task-${idx + 1}`;
-                // Map status to column ID (they are the same in this case)
-                if (status === col.id || (status === 'todo' && col.id === 'backlog')) {
-                    ids.push(taskId);
-                }
-                return ids;
-            }, [])
-        };
-        return acc;
-    }, {} as Record<string, BoardColumn>),
-    columnOrder: COLUMNS.map(col => col.id),
-};
+import { useTaskStore } from '../store/taskStore';
 
 const Home: React.FC = () => {
-    const [boardData, setBoardData] = useState<BoardData>(initialBoardData);
+    const { tasks, columns, columnOrder, loadTasks, createTask, updateTask, deleteTask, moveTask } = useTaskStore();
+    
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([]);
     const [selectedStatuses, setSelectedStatuses] = useState<TaskStatus[]>([]);
@@ -114,6 +27,10 @@ const Home: React.FC = () => {
         version: 0,
     });
     const [isGlobalIndicatorActive, setIsGlobalIndicatorActive] = useState(false);
+
+    useEffect(() => {
+        loadTasks();
+    }, [loadTasks]);
 
     const handleGlobalSort = (criteria: SortCriteria, order: SortOrder) => {
         setGlobalSort(prev => ({ criteria, order, version: prev.version + 1 }));
@@ -130,121 +47,30 @@ const Home: React.FC = () => {
         setIsViewModalOpen(true);
     };
 
-    const handleUpdateTask = (updatedTaskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const boardData: BoardData = {
+        tasks,
+        columns,
+        columnOrder,
+    };
+
+    const handleUpdateTask = async (updatedTaskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
         if (!selectedTaskId) return;
-
-        const oldTask = boardData.tasks[selectedTaskId];
-        const now = new Date();
-        const updatedTask: Task = {
-            ...oldTask,
-            ...updatedTaskData,
-            updatedAt: now,
-        };
-
-        setBoardData((prev: BoardData) => {
-            const newTasks = {
-                ...prev.tasks,
-                [selectedTaskId]: updatedTask,
-            };
-
-            let newColumns = { ...prev.columns };
-
-            // If status changed, move task between columns
-            if (oldTask.status !== updatedTaskData.status) {
-                // Remove from old column
-                const oldColumnId = Object.keys(prev.columns).find(key => 
-                    prev.columns[key].taskIds.includes(selectedTaskId)
-                );
-                
-                if (oldColumnId) {
-                    newColumns[oldColumnId] = {
-                        ...prev.columns[oldColumnId],
-                        taskIds: prev.columns[oldColumnId].taskIds.filter(id => id !== selectedTaskId),
-                    };
-                }
-
-                // Add to new column (usually the name matches status id in this setup)
-                const newColumnId = updatedTaskData.status;
-                if (newColumns[newColumnId]) {
-                    newColumns[newColumnId] = {
-                        ...newColumns[newColumnId],
-                        taskIds: [...newColumns[newColumnId].taskIds, selectedTaskId],
-                    };
-                }
-            }
-
-            return {
-                ...prev,
-                tasks: newTasks,
-                columns: newColumns,
-            };
-        });
-
+        await updateTask(selectedTaskId, updatedTaskData);
         setIsEditing(false);
         setIsViewModalOpen(false);
     };
 
-    const handleDeleteTask = () => {
+    const handleDeleteTask = async () => {
         if (!selectedTaskId) return;
-        
         if (window.confirm('Are you sure you want to delete this task?')) {
-            setBoardData((prev: BoardData) => {
-                const newTasks = { ...prev.tasks };
-                delete newTasks[selectedTaskId];
-
-                const newColumns = { ...prev.columns };
-                const columnId = Object.keys(prev.columns).find(key => 
-                    prev.columns[key].taskIds.includes(selectedTaskId)
-                );
-
-                if (columnId) {
-                    newColumns[columnId] = {
-                        ...prev.columns[columnId],
-                        taskIds: prev.columns[columnId].taskIds.filter(id => id !== selectedTaskId),
-                    };
-                }
-
-                return {
-                    ...prev,
-                    tasks: newTasks,
-                    columns: newColumns,
-                };
-            });
-
+            await deleteTask(selectedTaskId);
             setIsViewModalOpen(false);
             setSelectedTaskId(null);
         }
     };
 
-    const handleCreateTask = (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
-        const taskId = `task-${Date.now()}`;
-        const now = new Date();
-        
-        const newTask: Task = {
-            ...taskData,
-            id: taskId,
-            createdAt: now,
-            updatedAt: now,
-        };
-
-        const firstColumnId = boardData.columnOrder[0];
-        const firstColumn = boardData.columns[firstColumnId];
-
-        setBoardData((prev: BoardData) => ({
-            ...prev,
-            tasks: {
-                ...prev.tasks,
-                [taskId]: newTask,
-            },
-            columns: {
-                ...prev.columns,
-                [firstColumnId]: {
-                    ...firstColumn,
-                    taskIds: [...firstColumn.taskIds, taskId],
-                },
-            },
-        }));
-
+    const handleCreateTask = async (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+        await createTask(taskData);
         setIsNewTaskModalOpen(false);
     };
 
@@ -344,7 +170,7 @@ const Home: React.FC = () => {
             <main className="max-w-7xl mx-auto p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <Board 
                     data={boardData}
-                    onDataChange={setBoardData}
+                    onDragEnd={moveTask}
                     searchQuery={searchQuery}
                     selectedPriorities={selectedPriorities}
                     selectedStatuses={selectedStatuses}
