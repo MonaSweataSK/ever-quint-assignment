@@ -30,12 +30,28 @@ export const ORMDemo: React.FC = () => {
     try {
       log('Starting IDB ORM Test...');
 
+      const priorities: Task['priority'][] = ['low', 'medium', 'high'];
+      const statuses: Task['status'][] = ['todo', 'in-progress', 'done'];
+      const randomNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Ethan', 'Fiona'];
+      const randomTasks = [
+        'Research new UI trends',
+        'Fix production bug #102',
+        'Update documentation',
+        'Internal meeting preparation',
+        'Optimize database queries',
+        'Design new landing page',
+        'Review pull requests',
+        'Implement security patches'
+      ];
+      const randomTags = ['Urgent', 'Low Priority', 'Feature', 'Bug', 'Internal', 'Client', 'Refactor'];
+
       // 1. Create User
       const userId = `user-${Date.now()}`;
+      const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
       const user: User = {
         id: userId,
-        name: 'John Doe',
-        email: `john-${Date.now()}@example.com`,
+        name: randomName,
+        email: `${randomName.toLowerCase()}-${Date.now()}@example.com`,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -44,9 +60,10 @@ export const ORMDemo: React.FC = () => {
 
       // 2. Create Tag
       const tagId = `tag-${Date.now()}`;
+      const randomTagName = randomTags[Math.floor(Math.random() * randomTags.length)];
       const tag: Tag = {
         id: tagId,
-        name: `Urgent-${Date.now()}`,
+        name: `${randomTagName}-${Math.floor(Math.random() * 1000)}`,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -54,20 +71,21 @@ export const ORMDemo: React.FC = () => {
       log(`Tag created: ${tag.name}`);
 
       // 3. Create Task
+      const randomTitle = randomTasks[Math.floor(Math.random() * randomTasks.length)];
       const task: Task = {
         id: `task-${Date.now()}`,
-        title: 'Complete the IDB ORM',
-        description: 'Implement repositories and base class',
-        status: 'in-progress',
-        priority: 'high',
-        dueDate: new Date(Date.now() + 86400000),
+        title: randomTitle,
+        description: `Description for ${randomTitle.toLowerCase()}`,
+        status: statuses[Math.floor(Math.random() * statuses.length)],
+        priority: priorities[Math.floor(Math.random() * priorities.length)],
+        dueDate: new Date(Date.now() + Math.random() * 86400000 * 7), // within 7 days
         assignee: userId,
         tags: [tagId],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       await taskRepo.create(task);
-      log(`Task created: ${task.title}`);
+      log(`Task created: ${task.title} (${task.priority})`);
 
       await updateStats();
       log('Test completed successfully!');
