@@ -91,7 +91,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         status: formData.status,
         priority: formData.priority,
         assignee: formData.assignee,
-        dueDate: new Date(formData.dueDate),
+        dueDate: formData.dueDate ? new Date(formData.dueDate) : new Date(),
         tags: formData.tags,
       });
     }
@@ -182,7 +182,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           <Button
             label={initialTask ? 'Update Task' : 'Create Task'}
             variant="primary"
-            onClick={() => {}} // Form submit handles this
+            type="submit"
             loading={loading}
             disabled={loading}
             className="px-8"

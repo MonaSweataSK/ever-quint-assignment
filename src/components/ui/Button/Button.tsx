@@ -14,6 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   leftIcon,
   rightIcon,
   onClick,
+  type = 'button',
   className = '',
 }) => {
   // Base styles for the button
@@ -21,7 +22,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   // Variant styles
   const variantStyles = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg focus:ring-blue-500',
+    primary: 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md hover:shadow-lg focus:ring-indigo-500',
     secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 border border-gray-200 focus:ring-gray-300',
     destructive: 'bg-red-600 text-white hover:bg-red-700 shadow-md hover:shadow-lg focus:ring-red-500',
   };
@@ -38,7 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      type="button"
+      type={type}
       className={combinedClasses}
       disabled={disabled || loading}
       aria-label={loading ? `Loading ${label}` : label}

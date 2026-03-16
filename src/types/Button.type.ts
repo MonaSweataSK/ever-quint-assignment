@@ -39,6 +39,11 @@ export interface ButtonProps {
    */
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   /**
+   * The type of the button
+   * @default 'button'
+   */
+  type?: 'button' | 'submit' | 'reset';
+  /**
    * Additional CSS classes
    */
   className?: string;
