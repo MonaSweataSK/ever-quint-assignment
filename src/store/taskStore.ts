@@ -109,7 +109,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
 
       set(state => {
         const newTasks = { ...state.tasks, [taskId]: updatedTask };
-        let newColumns = { ...state.columns };
+        const newColumns = { ...state.columns };
 
         if (oldTask.status !== updatedTask.status) {
           const oldColumnId = getColumnIdFromStatus(oldTask.status);
