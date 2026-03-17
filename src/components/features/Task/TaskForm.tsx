@@ -148,7 +148,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         );
       case 'date':
         return <Input {...commonProps} type="date" />;
-      case 'tags':
+      case 'tags': {
         // Get unique existing tags from all tasks for suggestions
         const existingTags = Array.from(
           new Set(Object.values(tasks).flatMap(t => t.tags))
@@ -180,6 +180,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             />
           </div>
         );
+      }
       default:
         if (field.name === 'assignee') {
           return (
