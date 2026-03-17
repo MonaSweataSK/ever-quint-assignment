@@ -20,8 +20,10 @@ export function getSystemTags(task: Task): string[] {
     if (dueDate < now) {
       systemTags.push('Overdue');
     } else {
-      // 3. On Time logic
-      systemTags.push('On Time');
+      // 3. On Time logic (Exclude for 'todo' backlog items)
+      if (task.status !== 'todo') {
+        systemTags.push('On Time');
+      }
     }
   }
 
