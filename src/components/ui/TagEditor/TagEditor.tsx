@@ -1,5 +1,6 @@
 import React, { useState, useRef, type KeyboardEvent } from 'react';
 import type { TagEditorProps } from '../../../types/TagEditor.type';
+import { getTagColorScheme, TAG_COLOR_SCHEMES } from '../../../utils/tagColors';
 
 /**
  * A premium Tag Editor component.
@@ -109,29 +110,33 @@ export const TagEditor: React.FC<TagEditorProps> = ({
         }}
       >
         {/* Render Tags */}
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-xs font-medium animate-in zoom-in-95 duration-200"
-          >
-            {tag}
-            {!disabled && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeTag(tag);
-                }}
-                className="hover:bg-blue-100 p-0.5 rounded-full transition-colors"
-                aria-label={`Remove ${tag}`}
-              >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
-          </span>
-        ))}
+        {tags.map((tag) => {
+          const colorVariant = getTagColorScheme(tag);
+          const colors = TAG_COLOR_SCHEMES[colorVariant];
+          return (
+            <span
+              key={tag}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-medium animate-in zoom-in-95 duration-200 ${colors.bg} ${colors.text} ${colors.border}`}
+            >
+              {tag}
+              {!disabled && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeTag(tag);
+                  }}
+                  className="hover:opacity-70 p-0.5 rounded-full transition-colors"
+                  aria-label={`Remove ${tag}`}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </span>
+          );
+        })}
 
         {/* Input Field */}
         <input
@@ -168,20 +173,27 @@ export const TagEditor: React.FC<TagEditorProps> = ({
           className="absolute z-[60] left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
         >
           <div className="p-1">
-            {filteredSuggestions.map((suggestion, index) => (
-              <button
-                key={suggestion}
-                type="button"
-                onClick={() => addTag(suggestion)}
-                onMouseEnter={() => setHighlightedIndex(index)}
-                className={`
-                  w-full text-left px-3 py-2 text-sm rounded-md transition-colors
-                  ${highlightedIndex === index ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}
-                `}
-              >
-                {suggestion}
-              </button>
-            ))}
+            {filteredSuggestions.map((suggestion, index) => {
+              const colorVariant = getTagColorScheme(suggestion);
+              const colors = TAG_COLOR_SCHEMES[colorVariant];
+              return (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => addTag(suggestion)}
+                  onMouseEnter={() => setHighlightedIndex(index)}
+                  className={`
+                    w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2
+                    ${highlightedIndex === index ? 'bg-gray-50' : ''}
+                  `}
+                >
+                  <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
+                  <span className={highlightedIndex === index ? colors.text : 'text-gray-700'}>
+                    {suggestion}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

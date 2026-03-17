@@ -23,6 +23,15 @@ export const Tag: React.FC<TagProps> = ({
     error: 'bg-rose-50 text-rose-700 border border-rose-100',
     info: 'bg-sky-50 text-sky-700 border border-sky-100',
     gray: 'bg-gray-50 text-gray-700 border border-gray-100',
+    indigo: 'bg-indigo-50 text-indigo-700 border border-indigo-100',
+    violet: 'bg-violet-50 text-violet-700 border border-violet-100',
+    fuchsia: 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100',
+    rose: 'bg-rose-50 text-rose-700 border border-rose-100',
+    amber: 'bg-amber-50 text-amber-700 border border-amber-100',
+    emerald: 'bg-emerald-50 text-emerald-700 border border-emerald-100',
+    teal: 'bg-teal-50 text-teal-700 border border-teal-100',
+    sky: 'bg-sky-50 text-sky-700 border border-sky-100',
+    slate: 'bg-slate-50 text-slate-700 border border-slate-100',
   };
 
   // Size styles
@@ -40,6 +49,15 @@ export const Tag: React.FC<TagProps> = ({
     error: 'bg-rose-500',
     info: 'bg-sky-500',
     gray: 'bg-gray-500',
+    indigo: 'bg-indigo-500',
+    violet: 'bg-violet-500',
+    fuchsia: 'bg-fuchsia-500',
+    rose: 'bg-rose-500',
+    amber: 'bg-amber-500',
+    emerald: 'bg-emerald-500',
+    teal: 'bg-teal-500',
+    sky: 'bg-sky-500',
+    slate: 'bg-slate-500',
   };
 
   const combinedClasses = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;

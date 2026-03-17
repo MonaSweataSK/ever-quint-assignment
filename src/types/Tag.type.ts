@@ -1,6 +1,6 @@
 
 
-export type TagVariant = 'primary' | 'success' | 'warning' | 'info' | 'error' | 'gray';
+export type TagVariant = 'primary' | 'success' | 'warning' | 'info' | 'error' | 'gray' | 'indigo' | 'violet' | 'fuchsia' | 'rose' | 'amber' | 'emerald' | 'teal' | 'sky' | 'slate';
 export type TagSize = 'sm' | 'md' | 'lg';
 
 export interface Tag {
