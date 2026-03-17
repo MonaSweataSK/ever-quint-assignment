@@ -10,15 +10,17 @@ import Modal from '../components/ui/Modal/Modal';
 import TaskForm from '../components/features/Task/TaskForm';
 import type { Task } from '../types/Task.type';
 import { useTaskStore } from '../store/taskStore';
+import Toast from '../components/ui/Toast/Toast';
 
 const Home: React.FC = () => {
-    const { tasks, columns, columnOrder, loadTasks, createTask, updateTask, deleteTask, moveTask } = useTaskStore();
+    const { tasks, columns, columnOrder, loadTasks, createTask, updateTask, deleteTask, moveTask, migrationRan } = useTaskStore();
     
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([]);
     const [selectedStatuses, setSelectedStatuses] = useState<TaskStatus[]>([]);
     const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [showMigrationToast, setShowMigrationToast] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [globalSort, setGlobalSort] = useState<{ criteria: SortCriteria | null; order: SortOrder; version: number }>({
@@ -31,6 +33,12 @@ const Home: React.FC = () => {
     useEffect(() => {
         loadTasks();
     }, [loadTasks]);
+
+    useEffect(() => {
+        if (migrationRan) {
+            setShowMigrationToast(true);
+        }
+    }, [migrationRan]);
 
     const handleGlobalSort = (criteria: SortCriteria, order: SortOrder) => {
         setGlobalSort(prev => ({ criteria, order, version: prev.version + 1 }));
@@ -240,6 +248,16 @@ const Home: React.FC = () => {
                     />
                 )}
             </Modal>
+
+            {showMigrationToast && (
+                <Toast
+                    text="Database updated — your tasks have been migrated to the latest version."
+                    variant="info"
+                    position="bottom-center"
+                    duration={5000}
+                    onClose={() => setShowMigrationToast(false)}
+                />
+            )}
         </div>
     );
 };

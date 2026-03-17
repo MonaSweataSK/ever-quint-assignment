@@ -3,6 +3,7 @@ import type { BoardColumn } from '../types/Board.type';
 import type { Task, TaskStatus } from '../types/Task.type';
 import { COLUMNS } from '../constants/board';
 import { taskRepo } from '../db/repositories/TaskRepository';
+import { checkAndMigrate } from '../db/migration';
 import type { DropResult } from '@hello-pangea/dnd';
 
 interface TaskState {
@@ -11,6 +12,7 @@ interface TaskState {
   columnOrder: string[];
   isLoading: boolean;
   error: string | null;
+  migrationRan: boolean;
 
   // Actions
   loadTasks: () => Promise<void>;
@@ -34,10 +36,12 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   columnOrder: COLUMNS.map(col => col.id),
   isLoading: false,
   error: null,
+  migrationRan: false,
 
   loadTasks: async () => {
     set({ isLoading: true });
     try {
+      const migrationRan = await checkAndMigrate();
       const allTasks = await taskRepo.getAll();
       const tasksMap: Record<string, Task> = {};
       const columnsMap: Record<string, BoardColumn> = COLUMNS.reduce((acc, col) => {
@@ -53,7 +57,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         }
       });
 
-      set({ tasks: tasksMap, columns: columnsMap, isLoading: false });
+      set({ tasks: tasksMap, columns: columnsMap, isLoading: false, migrationRan });
     } catch (error) {
       set({ error: (error as Error).message, isLoading: false });
     }
