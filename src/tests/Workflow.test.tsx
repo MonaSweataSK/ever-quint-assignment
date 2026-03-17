@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Home from '../pages/home';
 import { useTaskStore } from '../store/taskStore';
@@ -42,7 +43,11 @@ describe('Workflow: Task Creation', () => {
   });
 
   it('should create a new task and show it on the board', async () => {
-    render(<Home />);
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>
+    );
 
     // Wait for board to be ready
     await screen.findByText('Backlog');

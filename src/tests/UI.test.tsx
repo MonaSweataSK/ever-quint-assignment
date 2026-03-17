@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Home from '../pages/home';
 import { taskRepo } from '../db/repositories/TaskRepository';
@@ -32,7 +33,11 @@ describe('UI Behavior: Task Filtering', () => {
   });
 
   it('should filter tasks by priority', async () => {
-    render(<Home />);
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>
+    );
 
     // Wait for tasks to load
     await screen.findByText('High Priority Task');
@@ -54,7 +59,11 @@ describe('UI Behavior: Task Filtering', () => {
   });
 
   it('should show all tasks when clearing filters', async () => {
-    render(<Home />);
+    render(
+      <MemoryRouter>
+        <Home />
+      </MemoryRouter>
+    );
 
     await screen.findByText('High Priority Task');
 
