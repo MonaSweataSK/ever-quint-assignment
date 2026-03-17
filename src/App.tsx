@@ -7,6 +7,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/task/new" element={<Home />} />
+        <Route path="/task/:taskId" element={<Home />} />
+        <Route path="/task/:taskId/edit" element={<Home />} />
         <Route path="/orm-demo" element={<ORMDemo />} />
       </Routes>
     </BrowserRouter>

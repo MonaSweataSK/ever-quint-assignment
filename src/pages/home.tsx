@@ -12,11 +12,14 @@ import type { Task } from '../types/Task.type';
 import { useTaskStore } from '../store/taskStore';
 import Toast from '../components/ui/Toast/Toast';
 
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useParams, useNavigate, useLocation } from 'react-router-dom';
 
 const Home: React.FC = () => {
     const { tasks, columns, columnOrder, loadTasks, createTask, updateTask, deleteTask, moveTask, migrationRan } = useTaskStore();
     const [searchParams, setSearchParams] = useSearchParams();
+    const { taskId: urlTaskId } = useParams();
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
     
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>(
@@ -25,11 +28,11 @@ const Home: React.FC = () => {
     const [selectedStatuses, setSelectedStatuses] = useState<TaskStatus[]>(
         (searchParams.get('status')?.split(',') as TaskStatus[] || []).filter(Boolean)
     );
-    const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
-    const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+    const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(pathname === '/task/new');
+    const [selectedTaskId, setSelectedTaskId] = useState<string | null>(urlTaskId || null);
     const [showMigrationToast, setShowMigrationToast] = useState(false);
-    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(!!urlTaskId);
+    const [isEditing, setIsEditing] = useState(pathname.endsWith('/edit'));
     
     // Initial sort from URL
     const urlSortCriteria = searchParams.get('sortBy') as SortCriteria | null;
@@ -59,10 +62,31 @@ const Home: React.FC = () => {
             searchQuery ? `Searching "${searchQuery}"` : null,
             selectedPriorities.length ? `Priorities: ${selectedPriorities.join(', ')}` : null,
             selectedStatuses.length ? `Statuses: ${selectedStatuses.join(', ')}` : null,
+            urlTaskId ? (pathname.endsWith('/edit') ? 'Editing Task' : 'Viewing Task') : (pathname === '/task/new' ? 'New Task' : null)
         ].filter(Boolean).join(' | ');
 
-        document.title = filterTitle ? `${filterTitle} - EverQuint` : 'EverQuint Workspce';
-    }, [searchQuery, selectedPriorities, selectedStatuses, globalSort, setSearchParams]);
+        document.title = filterTitle ? `${filterTitle} - EverQuint` : 'EverQuint Workspace';
+    }, [searchQuery, selectedPriorities, selectedStatuses, globalSort, setSearchParams, urlTaskId, pathname]);
+
+    // Sync modal state with URL
+    useEffect(() => {
+        if (pathname === '/task/new') {
+            setIsNewTaskModalOpen(true);
+            setIsViewModalOpen(false);
+            setSelectedTaskId(null);
+            setIsEditing(false);
+        } else if (urlTaskId) {
+            setSelectedTaskId(urlTaskId);
+            setIsViewModalOpen(true);
+            setIsNewTaskModalOpen(false);
+            setIsEditing(pathname.endsWith('/edit'));
+        } else {
+            setIsNewTaskModalOpen(false);
+            setIsViewModalOpen(false);
+            setSelectedTaskId(null);
+            setIsEditing(false);
+        }
+    }, [pathname, urlTaskId]);
 
     useEffect(() => {
         loadTasks();
@@ -84,9 +108,8 @@ const Home: React.FC = () => {
     };
 
     const handleTaskClick = (taskId: string, editMode: boolean = false) => {
-        setSelectedTaskId(taskId);
-        setIsEditing(editMode);
-        setIsViewModalOpen(true);
+        const path = editMode ? `/task/${taskId}/edit` : `/task/${taskId}`;
+        navigate({ pathname: path, search: searchParams.toString() });
     };
 
     const boardData: BoardData = {
@@ -95,26 +118,28 @@ const Home: React.FC = () => {
         columnOrder,
     };
 
-    const handleUpdateTask = async (updatedTaskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
-        if (!selectedTaskId) return;
-        await updateTask(selectedTaskId, updatedTaskData);
-        setIsEditing(false);
-        setIsViewModalOpen(false);
-    };
-
-    const handleDeleteTask = async () => {
-        if (!selectedTaskId) return;
-        if (window.confirm('Are you sure you want to delete this task?')) {
-            await deleteTask(selectedTaskId);
-            setIsViewModalOpen(false);
-            setSelectedTaskId(null);
+    const handleUpdateTask = async (taskData: any) => {
+        if (selectedTaskId) {
+            await updateTask(selectedTaskId, taskData);
+            navigate({ pathname: `/task/${selectedTaskId}`, search: searchParams.toString() });
         }
     };
 
-    const handleCreateTask = async (taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
-        await createTask(taskData);
-        setIsNewTaskModalOpen(false);
+    const handleDeleteTask = async (taskId: string) => {
+        if (window.confirm('Are you sure you want to delete this task?')) {
+            await deleteTask(taskId);
+            if (selectedTaskId === taskId) {
+                navigate({ pathname: '/', search: searchParams.toString() });
+            }
+        }
     };
+
+    const handleCreateTask = async (taskData: any) => {
+        await createTask(taskData);
+        navigate({ pathname: '/', search: searchParams.toString() });
+    };
+
+    const selectedTask = selectedTaskId ? tasks[selectedTaskId] : null;
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
@@ -204,7 +229,7 @@ const Home: React.FC = () => {
                         />
 
                         <button 
-                            onClick={() => setIsNewTaskModalOpen(true)}
+                            onClick={() => navigate({ pathname: '/task/new', search: searchParams.toString() })}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-indigo-500/25 active:scale-95 flex items-center gap-2 group"
                         >
                             <svg className="w-5 h-5 transition-transform group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,24 +260,20 @@ const Home: React.FC = () => {
 
             <Modal
                 isOpen={isNewTaskModalOpen}
-                onClose={() => setIsNewTaskModalOpen(false)}
+                onClose={() => navigate({ pathname: '/', search: searchParams.toString() })}
                 title="Create New Task"
                 position="right"
                 dimensions="md"
             >
                 <TaskForm 
                     onSubmit={handleCreateTask}
-                    onCancel={() => setIsNewTaskModalOpen(false)}
+                    onCancel={() => navigate({ pathname: '/', search: searchParams.toString() })}
                 />
             </Modal>
 
             <Modal
                 isOpen={isViewModalOpen}
-                onClose={() => {
-                    setIsViewModalOpen(false);
-                    setSelectedTaskId(null);
-                    setIsEditing(false);
-                }}
+                onClose={() => navigate({ pathname: '/', search: searchParams.toString() })}
                 title={isEditing ? 'Edit Task' : 'Task Details'}
                 position="right"
                 dimensions="md"
