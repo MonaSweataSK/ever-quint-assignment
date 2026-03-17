@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { faker } from '@faker-js/faker';
 import { taskRepo } from '../../../db/repositories/TaskRepository';
 import { userRepo } from '../../../db/repositories/UserRepository';
 import { tagRepo } from '../../../db/repositories/TagRepository';
@@ -36,56 +37,74 @@ export const Playground: React.FC = () => {
 
       const priorities: Task['priority'][] = ['low', 'medium', 'high'];
       const statuses: Task['status'][] = ['todo', 'in-progress', 'done'];
-      const randomNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Ethan', 'Fiona'];
-      const randomTasks = [
-        'Research new UI trends',
-        'Fix production bug #102',
-        'Update documentation',
-        'Internal meeting preparation',
-        'Optimize database queries',
-        'Design new landing page',
-        'Review pull requests',
-        'Implement security patches'
-      ];
-      const randomTags = ['Urgent', 'Low Priority', 'Feature', 'Bug', 'Internal', 'Client', 'Refactor'];
 
       // 1. Create User
-      const userId = `user-${Date.now()}`;
-      const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
+      const userId = faker.string.uuid();
+      const firstName = faker.person.firstName();
+      const lastName = faker.person.lastName();
+      const userName = `${firstName} ${lastName}`;
+      
       const user: User = {
         id: userId,
-        name: randomName,
-        email: `${randomName.toLowerCase()}-${Date.now()}@example.com`,
+        name: userName,
+        email: faker.internet.email({ firstName, lastName }).toLowerCase(),
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       await userRepo.create(user);
       log(`User created: ${user.name}`);
 
-      // 2. Create Tag
-      const tagId = `tag-${Date.now()}`;
-      const randomTagName = randomTags[Math.floor(Math.random() * randomTags.length)];
-      const tag: Tag = {
-        id: tagId,
-        name: `${randomTagName}-${Math.floor(Math.random() * 1000)}`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      await tagRepo.create(tag);
-      log(`Tag created: ${tag.name}`);
+      // 2. Create Tags (1-3)
+      const taskTags: string[] = [];
+      const numTags = faker.number.int({ min: 1, max: 3 });
+      
+      for (let i = 0; i < numTags; i++) {
+        const tagName = faker.helpers.arrayElement([
+          faker.commerce.productAdjective(),
+          faker.hacker.adjective(),
+          faker.color.human(),
+          'Urgent', 'Bug', 'Feature', 'Refactor', 'Internal'
+        ]);
+        
+        const tagId = faker.string.uuid();
+        const tag: Tag = {
+          id: tagId,
+          name: tagName.charAt(0).toUpperCase() + tagName.slice(1),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        
+        // Use try-catch for unique index collision if same tag name generated
+        try {
+          await tagRepo.create(tag);
+          log(`Tag created: ${tag.name}`);
+          taskTags.push(tagId);
+        } catch {
+          // If tag exists, try to find it or just skip for demo
+          const existing = await tagRepo.getByName(tag.name);
+          if (existing) taskTags.push(existing.id);
+        }
+      }
 
       // 3. Create Task
-      const randomTitle = randomTasks[Math.floor(Math.random() * randomTasks.length)];
+      const taskTitle = faker.helpers.arrayElement([
+        `${faker.hacker.verb()} ${faker.hacker.noun()}`,
+        `${faker.commerce.productAdjective()} ${faker.hacker.verb()}`,
+        faker.company.catchPhrase(),
+        `Fix ${faker.hacker.adjective()} bug`,
+        `Implement ${faker.hacker.noun()} sync`
+      ]);
+
       const task: Task = {
-        id: `task-${Date.now()}`,
-        title: randomTitle,
-        description: `Description for ${randomTitle.toLowerCase()}`,
-        status: statuses[Math.floor(Math.random() * statuses.length)],
-        priority: priorities[Math.floor(Math.random() * priorities.length)],
-        dueDate: new Date(Date.now() + Math.random() * 86400000 * 7), // within 7 days
+        id: faker.string.uuid(),
+        title: taskTitle.charAt(0).toUpperCase() + taskTitle.slice(1),
+        description: faker.lorem.paragraph(),
+        status: faker.helpers.arrayElement(statuses),
+        priority: faker.helpers.arrayElement(priorities),
+        dueDate: faker.date.soon({ days: 14 }),
         assignee: userId,
-        category: 'Testing',
-        tags: [tagId],
+        category: faker.commerce.department(),
+        tags: taskTags,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
