@@ -200,18 +200,20 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     const newStatus: TaskStatus = destination.droppableId === 'backlog' ? 'todo' : (destination.droppableId as TaskStatus);
     const updatedTask = { ...task, status: newStatus, updatedAt: new Date() };
 
-    try {
-      await taskRepo.update(updatedTask);
-      set(state => ({
-        tasks: { ...state.tasks, [draggableId]: updatedTask },
-        columns: {
-          ...state.columns,
-          [newStart.id]: newStart,
-          [newFinish.id]: newFinish,
-        },
-      }));
-    } catch (error) {
+    // Optimistic Update (Update UI instantly)
+    set(state => ({
+      tasks: { ...state.tasks, [draggableId]: updatedTask },
+      columns: {
+        ...state.columns,
+        [newStart.id]: newStart,
+        [newFinish.id]: newFinish,
+      },
+    }));
+
+    // Background sync to DB
+    taskRepo.update(updatedTask).catch((error) => {
+      console.error("Failed to persist task move:", error);
       set({ error: (error as Error).message });
-    }
+    });
   },
 }));
