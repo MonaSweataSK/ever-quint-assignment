@@ -2,6 +2,13 @@
 
 Welcome to EverQuint! This guide will walk you through the core flow of managing tasks, testing the data layers, and organizing your work visually.
 
+### Full Application Walkthrough
+Watch the complete user flow in action below:
+
+![EverQuint Demo Walkthrough](./assets/user_flow_demo.webp)
+
+---
+
 ## 1. The Main Workspace
 When you first load the application without tasks, you'll be greeted by an empty state Kanban board. Once tasks are generated, the board comes alive with vibrant color-coded tags and computed priority markers (like "Overdue").
 
