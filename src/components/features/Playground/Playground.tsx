@@ -59,34 +59,36 @@ export const Playground: React.FC = () => {
       const numTags = faker.number.int({ min: 1, max: 3 });
       
       for (let i = 0; i < numTags; i++) {
-        const rawTagName = faker.helpers.arrayElement([
+        // Ensure single-word tag names
+        const tagNameRaw = faker.helpers.arrayElement([
           faker.word.adjective(),
-          faker.word.noun(),
-          faker.hacker.adjective(),
-          faker.color.human(),
-          'Urgent', 'Bug', 'Feature', 'Refactor', 'Internal'
+          faker.hacker.noun(),
+          'Bug', 'Urgent', 'Refactor', 'Dev', 'Internal'
         ]);
         
-        // Ensure single word by taking the first word if multiple are returned
-        const tagName = rawTagName.split(' ')[0];
+        // Remove spaces if any (faker words are usually single but hacker nouns can be two)
+        const tagName = tagNameRaw.split(' ')[0];
+        const formattedTag = tagName.charAt(0).toUpperCase() + tagName.slice(1).toLowerCase();
         
         const tagId = faker.string.uuid();
         const tag: Tag = {
           id: tagId,
-          name: tagName.charAt(0).toUpperCase() + tagName.slice(1),
+          name: formattedTag,
           createdAt: new Date(),
           updatedAt: new Date(),
         };
         
-        // Use try-catch for unique index collision if same tag name generated
+        // Use try-catch for unique index collision
         try {
           await tagRepo.create(tag);
           log(`Tag created: ${tag.name}`);
-          taskTags.push(tagId);
         } catch {
-          // If tag exists, try to find it or just skip for demo
-          const existing = await tagRepo.getByName(tag.name);
-          if (existing) taskTags.push(existing.id);
+          // Tag name already exists, which is fine
+        }
+        
+        // UI expects names in the tags array
+        if (!taskTags.includes(formattedTag)) {
+          taskTags.push(formattedTag);
         }
       }
 
