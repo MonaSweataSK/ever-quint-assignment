@@ -120,9 +120,17 @@ const Home: React.FC = () => {
                             <h1 className="text-xl font-bold text-gray-900 tracking-tight leading-none">
                                 EverQuint
                             </h1>
-                            <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1 block">
-                                Workspace
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1 block">
+                                    Workspace
+                                </span>
+                                <a 
+                                    href="/orm-demo" 
+                                    className="text-[10px] font-bold text-gray-400 hover:text-indigo-600 uppercase tracking-widest mt-1 block border-l border-gray-200 pl-2 ml-1"
+                                >
+                                    ORM Demo
+                                </a>
+                            </div>
                         </div>
                     </div>
 
