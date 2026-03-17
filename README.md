@@ -1,6 +1,10 @@
 # EverQuint: Task Management Assignment
 
-EverQuint is a fully offline-capable task management application. This project was built from the ground up to demonstrate a scalable Kanban architecture and robust client-side state management without relying on heavy framework templates.
+EverQuint is a premium, robust, and offline-first task management application built from the ground up. Inspired by industry leaders like **Jira** and **Linear**, the primary objective of this project was to construct a scalable Kanban architecture from scratch, highlighting fundamental engineering principles over reliance on heavy, pre-built template libraries.
+
+---
+
+[📖 **Click here for the Full Visual User Guide & App Walkthrough Demo**](./docs/guide.md)
 
 ---
 
@@ -9,38 +13,36 @@ EverQuint is a fully offline-capable task management application. This project w
 The core technical challenge was to build a robust system that mimics a full-stack application purely on the client-side. 
 
 ### 1. IndexedDB as a "Virtual Backend"
-Instead of treating client-storage as a simple key-value cache (like `localStorage`), we architected the **IndexedDB** layer to act as a proper backend system. 
-- **Repository Pattern**: Data access is abstracted via strict generic `Repository` classes, identical to how a server might query a SQL database.
-- **Client-Side Migrations**: We implemented a dynamic schema migration script (`migration.ts`) that runs on initialization. If the TypeScript schema definition (`TASK_SCHEMA`) changes during development, the system securely hashes it, detects the diff, and runs an automated transformation on the user's local database to normalize existing records—simulating a real database migration.
-- **Asynchronous Data Flow**: The UI never mutates the database synchronously. All interactions are handled asynchronously through `Zustand`, mimicking network requests to ensure non-blocking UI threads.
+Instead of using client storage like a simple cache, we treated IndexedDB like a real backend system.
+- **Repository Pattern**: We created reusable repository classes to handle data access, similar to how a backend interacts with a database. This keeps things clean and structured.
+- **Client-Side Migrations**: We built a migration system that runs when the app starts. If the data schema changes, it detects the difference and updates existing data automatically—just like database migrations on a server.
+- **Asynchronous Data Flow**: The UI never updates the database directly. All data operations go through Zustand and happen asynchronously, similar to API calls. This keeps the UI smooth and avoids blocking.
 
 ### 2. Custom UI Components
-Rather than stitching together pre-built component libraries (e.g., MUI or Ant Design), we constructed the core design system manually using React and Tailwind CSS.
-- The `TaskCard`, `Column`, modal overlays, and form elements are entirely bespoke.
-- This approach granularly demonstrates proficiency in component lifecycle, DOM event bubbling, and CSS layout architecture.
+Instead of relying on pre-built UI libraries like Material UI or Ant Design, we built our own design system from scratch using React and Tailwind CSS.
+- Components like `TaskCard`, `Column`, modals, buttons, and form elements were all custom-built.
 
 ### 3. Deep-Linkable Routing
-State is managed fundamentally through the URL rather than localized React context.
-- Modals are completely URL-driven. Navigating to `/task/new` or `/task/:id/edit` instantly triggers the correct UI state, allowing users to bookmark and share precise application context.
-- Board filters (search queries, priority, and sorting dimensions) are automatically serialized and synced to URL search parameters.
+Instead of managing state only inside React components, we used the URL as the main source of truth for the app’s state.
+- Modals are fully controlled by the URL. For example, going to `/task/new` or `/task/:id/edit` automatically opens the right modal. This also makes it easy to bookmark or share a specific screen.
+- Things like search, filters, priority, and sorting are all stored in the URL as query parameters, so the state stays consistent and shareable.
 
 ---
 
-## 🛠️ Technology Stack & Rationale
-
+## 🛠️ Technology Stack
 We selectively chose our stack to provide maximum performance, developer experience, and scalability.
 
-### Core Architecture
+### Core Architecture:
 - **React**: The view layer. Chosen for its ecosystem and declarative UI capabilities.
-- **TypeScript (Strict)**: The entire codebase forces strict TypeScript compilation. We have zero instances of `no-explicit-any`. If the data shape isn't known, it is properly handled via `Record<string, unknown>` or robust generics.
-- **Tailwind CSS**: For styling. By using utility classes, we achieved a custom, premium aesthetic (glassmorphism, micro-animations, deterministic tag colors) without the bloat of a UI component library (like MUI or Ant Design) dictating our design language.
+- **TypeScript**: The entire codebase forces strict TypeScript compilation. We have zero instances of `no-explicit-any`. If the data shape isn't known, it is properly handled via `Record<string, unknown>` or robust generics.
+- **Tailwind CSS**: For styling, we used utility classes to build everything from scratch. This helped us create a clean and premium look (like small effects, small animations, and consistent tag colors) without depending on heavy UI libraries like Material UI or Ant Design controlling our design.
 
-### Data & State Management
-- **IndexedDB (via `idb` wrapper)**: Our persistent data layer. It provides asynchronous, structured storage directly in the user's browser logic, supporting indexing and heavy queries, which is impossible with synchronous `localStorage`.
-- **Zustand**: A light, unopinionated client-state manager. We use it to coordinate the complex asynchronous flow between IndexedDB and our React components, ensuring the board re-renders instantly upon interactions.
-- **React Router**: Controls our deep-linkable URLs and modal overlays.
+### Data & State Management:
+- **IndexedDB**: Our persistent data layer. It provides asynchronous, structured storage directly in the user's browser logic, supporting indexing and heavy queries, which is impossible with synchronous `localStorage`.
+- **Zustand**: We use it to coordinate the complex asynchronous flow between IndexedDB and our React components, ensuring the board re-renders instantly upon interactions.
+- **React Router**: Controls our linkable URLs and modal overlays.
 
-### Performance & Tooling
+### Performance & Tooling:
 - **Vite**: Ultra-fast build tool. We utilized Vite's capabilities to configure route-level code splitting (via `React.lazy`), effectively separating our heavy mock-data logic (Faker.js) into separate networking chunks to guarantee the main board loads instantaneously.
 - **Vitest**: For our automated test suite. It executes tests across our schema logic, IndexedDB mock migrations, and UI components.
 - **@hello-pangea/dnd**: A stable, performant fork of `react-beautiful-dnd` to power our core Kanban mechanic.
@@ -49,11 +51,10 @@ We selectively chose our stack to provide maximum performance, developer experie
 ---
 
 ## ✨ Features
-
-- **Custom Kanban Board**: State-driven drag-and-drop powered by `@hello-pangea/dnd`.
-- **Intelligent Status & Data Computing**: The system automatically computes and injects contextual tags (e.g., "Overdue", "On Time", "Not Started") dynamically based on chronological properties and status enums.
-- **Deterministic Token Colors**: Custom tags calculate their hex configurations dynamically via string-hashing, removing the need for predefined CSS maps.
-- **Enterprise UI Refinements**: Searchable assignee selection menus, case-insensitive duplicate prevention via the `TagEditor`, double-click-to-edit interactions on the task view interface, and strict route-level asynchronous code splitting boundaries.
+- **Custom Kanban Board**: Built a drag-and-drop board using `@hello-pangea/dnd`, where everything updates based on the app state.
+- **Smart Status Updates**: The app automatically shows tags like “Overdue”, “On Time”, or “Not Started” based on task dates and status—no manual updates needed.
+- **Dynamic Tag Colors**: Tag colors are generated automatically using a hashing method, so we don’t need to maintain fixed color mappings.
+- **Polished UI Experience**: Added useful features like searchable assignee dropdowns, preventing duplicate tags (case-insensitive), double-click to edit tasks, and loading different parts of the app only when needed for better performance.
 
 ---
 
@@ -62,7 +63,7 @@ We selectively chose our stack to provide maximum performance, developer experie
 ### Scenario 1: Creating a Task
 1. From the main Kanban board, click the **"New Task"** button in the header. (Alternatively, navigate directly to `localhost:3000/task/new`).
 2. A sliding modal overlay will appear on the right side.
-3. Enter your task details. The `Tag` form element will offer suggestions based on other tags currently active on the board.
+3. Enter your task details. The Tag form element will offer suggestions based on other tags currently active on the board.
 4. Hit **Save**. The modal will close, the task will persist intelligently in IndexedDB, and the Kanban board instantly re-renders.
 
 ### Scenario 2: Inline Editing
@@ -85,7 +86,6 @@ To test IndexedDB performance, a bespoke generic mocking engine was implemented.
 ---
 
 ## 💻 Local Development & Setup
-
 Prerequisites: `Node.js` (v18+)
 
 1. **Install Dependencies**
@@ -113,7 +113,6 @@ Prerequisites: `Node.js` (v18+)
    ```bash
    npm run build
    ```
-   *The application guarantees small chunk generation thanks to `React.lazy` routing.*
 
 ---
 
