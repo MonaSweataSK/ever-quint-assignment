@@ -73,18 +73,6 @@ export const TASK_SCHEMA: FieldDefinition[] = [
     label: 'Tags',
     type: 'tags',
     defaultValue: [],
-  },
-  {
-    name: 'testField',
-    label: 'testField',
-    type: 'text',
-    defaultValue: '',
-  },
-    {
-    name: 'testField2',
-    label: 'testField2',
-    type: 'text',
-    defaultValue: '',
   }
 ];
 
