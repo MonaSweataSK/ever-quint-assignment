@@ -1,4 +1,3 @@
-import React from 'react';
 import type { TaskPriority, TaskStatus } from '../types/Task.type';
 import type { SortOption } from '../components/ui/Sort/Sort';
 export interface ColumnConfig {
