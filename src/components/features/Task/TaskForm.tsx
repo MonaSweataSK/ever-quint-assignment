@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Task } from '../../../types/Task.type';
+import type { User } from '../../../types/User.type';
+import { userRepo } from '../../../db/repositories/UserRepository';
 import Input from '../../ui/Input/Input';
 import Select from '../../ui/Select/Select';
 import TagEditor from '../../ui/TagEditor/TagEditor';
@@ -25,11 +27,25 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   className = '',
 }) => {
   const [isEditing, setIsEditing] = useState(initialIsEditing);
+  const [users, setUsers] = useState<User[]>([]);
   
   // Sync with prop if it changes from outside
-  React.useEffect(() => {
+  useEffect(() => {
     setIsEditing(initialIsEditing);
   }, [initialIsEditing]);
+
+  // Fetch users for the assignee dropdown
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const allUsers = await userRepo.getAll();
+        setUsers(allUsers);
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<any>(() => {
@@ -131,6 +147,18 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           />
         );
       default:
+        if (field.name === 'assignee') {
+          return (
+            <Select
+              {...commonProps}
+              onChange={(val) => handleSelectChange(field.name, val)}
+              options={[
+                { label: 'Unassigned', value: '' },
+                ...users.map(u => ({ label: u.name, value: u.name }))
+              ]}
+            />
+          );
+        }
         return <Input {...commonProps} />;
     }
   };
