@@ -38,6 +38,13 @@ const FormField: React.FC<FormFieldProps> = ({
       )}
       
       <div className="relative">
+        {onDoubleClick && (
+          <div 
+            className="absolute inset-0 z-10 cursor-pointer" 
+            onDoubleClick={onDoubleClick}
+            aria-hidden="true"
+          />
+        )}
         {children}
       </div>
 
