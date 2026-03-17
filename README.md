@@ -1,20 +1,28 @@
-# EverQuint: Enterprise Task Management
+# EverQuint: Task Management Assignment
 
-EverQuint is a premium, robust, and offline-first task management application built from the ground up. Inspired by industry leaders like **Jira** and **Linear**, the primary objective of this project was to construct a scalable Kanban architecture from scratch, highlighting fundamental engineering principles over reliance on heavy, pre-built template libraries.
+EverQuint is a fully offline-capable task management application. This project was built from the ground up to demonstrate a scalable Kanban architecture and robust client-side state management without relying on heavy framework templates.
 
 ---
 
-## 📖 The "From Scratch" Story
+## 🏗️ Architectural Overview
 
-When setting out to build EverQuint, the easiest path would have been to stitch together a few heavy UI libraries and save everything to `localStorage`. Instead, we treated this as a real-world enterprise engineering challenge.
+The core technical challenge was to build a robust system that mimics a full-stack application purely on the client-side. 
 
-We wanted to demonstrate deep technical proficiency by designing custom, bespoke systems:
-1. **The UI**: We built our own `TaskCard`, `Column`, and `Modal` components tailored precisely to our design language using Tailwind CSS.
-2. **The Data Layer**: We rejected simple storage in favor of a robust **IndexedDB** implementation. We built a custom `Repository` pattern and an automated schema migration system that securely handles upgrades on the client's machine.
-3. **The State**: We implemented deep-linking everywhere. Modals aren't just local state; they are driven by the URL routing (`/task/:id/edit`), ensuring users can share exact views with colleagues.
-4. **The Polish**: We strictly typed the entire application in TypeScript, achieving a 100% clean linter (0 warnings, 0 `any` types) and implemented route-level code splitting for sheer performance.
+### 1. IndexedDB as a "Virtual Backend"
+Instead of treating client-storage as a simple key-value cache (like `localStorage`), we architected the **IndexedDB** layer to act as a proper backend system. 
+- **Repository Pattern**: Data access is abstracted via strict generic `Repository` classes, identical to how a server might query a SQL database.
+- **Client-Side Migrations**: We implemented a dynamic schema migration script (`migration.ts`) that runs on initialization. If the TypeScript schema definition (`TASK_SCHEMA`) changes during development, the system securely hashes it, detects the diff, and runs an automated transformation on the user's local database to normalize existing records—simulating a real database migration.
+- **Asynchronous Data Flow**: The UI never mutates the database synchronously. All interactions are handled asynchronously through `Zustand`, mimicking network requests to ensure non-blocking UI threads.
 
-The result is an application that feels instantly responsive, works fully offline, and is architecturally sound enough for an entire team.
+### 2. Custom UI Components
+Rather than stitching together pre-built component libraries (e.g., MUI or Ant Design), we constructed the core design system manually using React and Tailwind CSS.
+- The `TaskCard`, `Column`, modal overlays, and form elements are entirely bespoke.
+- This approach granularly demonstrates proficiency in component lifecycle, DOM event bubbling, and CSS layout architecture.
+
+### 3. Deep-Linkable Routing
+State is managed fundamentally through the URL rather than localized React context.
+- Modals are completely URL-driven. Navigating to `/task/new` or `/task/:id/edit` instantly triggers the correct UI state, allowing users to bookmark and share precise application context.
+- Board filters (search queries, priority, and sorting dimensions) are automatically serialized and synced to URL search parameters.
 
 ---
 
@@ -40,25 +48,12 @@ We selectively chose our stack to provide maximum performance, developer experie
 
 ---
 
-## ✨ Comprehensive Feature Breakdown
+## ✨ Features
 
-### 1. Offline-First Custom Data Layer
-EverQuint persists all data instantly via a custom IndexedDB Repository instance.
-- **Automated Schema Migrations**: We implemented a robust migration script (`migration.ts`) that runs passively on initial load. It securely hashes the TypeScript schema definition, and if a mismatch in the database is detected, automagically normalizes all previous user data to the new schema constraints seamlessly.
-
-### 2. URL-Driven State & Deep Linking
-We treat the URL as the single source of truth for the user's workspace context.
-- Modals are routes. Navigating to `/task/new` launches the create form over the board. Navigating to `/task/:id/edit` instantly triggers edit mode for that specific item.
-- Interactions like searching (`?q=bug`), filtering by priority (`?priority=high`), and sorting (`?sortBy=createdAt`) sync instantly with the URL allowing users to bookmark and share specific board states effortlessly.
-
-### 3. Intelligent Status & Visual Tagging
-- **Computed Context**: The system automatically computes and injects priority tags like **"Overdue"**, **"On Time"**, **"Done"**, or **"Not Started"** into task cards based on live date properties.
-- **Deterministic Colors**: Every manual tag generated computes its background and text colors deterministically via a string-hash algorithm, ensuring visually distinct and consistent tags across the ecosystem without manual configuration.
-
-### 4. Enterprise Refinements
-- Searchable Assignee selection dropdown menus.
-- Case-insensitive duplicate prevention handling in the Custom Tag Editor.
-- Complete route-level asynchronous code splitting boundaries.
+- **Custom Kanban Board**: State-driven drag-and-drop powered by `@hello-pangea/dnd`.
+- **Intelligent Status & Data Computing**: The system automatically computes and injects contextual tags (e.g., "Overdue", "On Time", "Not Started") dynamically based on chronological properties and status enums.
+- **Deterministic Token Colors**: Custom tags calculate their hex configurations dynamically via string-hashing, removing the need for predefined CSS maps.
+- **Enterprise UI Refinements**: Searchable assignee selection menus, case-insensitive duplicate prevention via the `TagEditor`, double-click-to-edit interactions on the task view interface, and strict route-level asynchronous code splitting boundaries.
 
 ---
 
@@ -70,24 +65,22 @@ We treat the URL as the single source of truth for the user's workspace context.
 3. Enter your task details. The `Tag` form element will offer suggestions based on other tags currently active on the board.
 4. Hit **Save**. The modal will close, the task will persist intelligently in IndexedDB, and the Kanban board instantly re-renders.
 
-### Scenario 2: Viewing and Inline Editing
-We optimize for rapid edits.
-1. Click on any `TaskCard` on the board to launch the **View Mode** detail modal.
-2. **Double-Click Edit Flow**: If you spot a typo while reading the detailed view, simply **double-click** anywhere on a read-only field (like title or description).
-3. The entire view instantly converts into an **Edit Form**.
-4. Make your changes and press **Save**. The form instantly resolves back to the read-only view state.
+### Scenario 2: Inline Editing
+Optimized for rapid contextual updates:
+1. Click any `TaskCard` to mount the detail modal in a read-only View Mode.
+2. Double-click anywhere on an editable field to immediately swap the context into an Edit Form representation.
+3. Save changes to dispatch the IndexedDB mutator and resolve the visual state.
 
 ### Scenario 3: Organizing the Board (Drag & Drop, Filtering)
 1. **Changing Status**: Simply click and hold an entire Task Card, and physically drag it horizontally into a different status column (e.g., from *To Do* to *In Progress*).
 2. **Sorting by Column**: Each column header features a sort icon. Click it to sort tasks *only* within that column by chronological or alphabetical order.
 3. **Global Filtering**: Use the global header controls at the very top of the application to search for string queries across titles and descriptions, or strictly filter out tasks that do not match specific Priorities or Statuses.
 
-### Scenario 4: Developer Debugging / Playground
-Testing a Kanban board is tedious if you have to manually create 30 tasks.
-1. Click the **"Playground"** button in the top navigation.
-2. The Playground is a unique route (`/playground`) that acts as an ORM debugger.
-3. Use the interface to "Generate 10 Tasks". This engine uses Faker.js to populate IndexedDB with completely realistic dummy tasks (e.g., proper English descriptions, real human names for assignees).
-4. Click **"Back to Workspace"** to view your freshly populated board and immediately start dragging and organizing to test the UI's resilience.
+### Scenario 4: Testing & Mock Generation (The Playground)
+To test IndexedDB performance, a bespoke generic mocking engine was implemented.
+1. Navigate to `/playground`.
+2. Generate tasks via `Faker.js` logic to instantly populate the IndexedDB with fully hydrated mock JSON graphs (e.g., real names, random statuses).
+3. Switch back to the workspace to visualize the data scaling across the board.
 
 ---
 
