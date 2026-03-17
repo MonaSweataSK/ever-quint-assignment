@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Home from '../pages/home';
 import { taskRepo } from '../db/repositories/TaskRepository';
+import { userRepo } from '../db/repositories/UserRepository';
 
 // Mocks
 vi.mock('../db/migration', () => ({
@@ -29,7 +30,11 @@ describe('UI Behavior: Task Filtering', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (taskRepo.getAll as any).mockResolvedValue(Object.values(mockTasks));
+    vi.spyOn(taskRepo, 'getAll').mockResolvedValue(mockTasks);
+    vi.spyOn(userRepo, 'getAll').mockResolvedValue([
+      { id: '1', name: 'Ram', email: 'ram@everquint.com', createdAt: new Date() },
+      { id: '2', name: 'Mona', email: 'mona@everquint.com', createdAt: new Date() }
+    ]);
   });
 
   it('should filter tasks by priority', async () => {

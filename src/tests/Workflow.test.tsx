@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Home from '../pages/home';
 import { useTaskStore } from '../store/taskStore';
+import { userRepo } from '../db/repositories/UserRepository';
 
 import { taskRepo } from '../db/repositories/TaskRepository';
 
@@ -30,6 +31,10 @@ describe('Workflow: Task Creation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (taskRepo.getAll as any).mockResolvedValue([]);
+    vi.spyOn(userRepo, 'getAll').mockResolvedValue([
+      { id: '1', name: 'Ram', email: 'ram@everquint.com', createdAt: new Date() },
+      { id: '2', name: 'Mona', email: 'mona@everquint.com', createdAt: new Date() }
+    ]);
     // Reset store before each test
     useTaskStore.setState({
       tasks: {},
