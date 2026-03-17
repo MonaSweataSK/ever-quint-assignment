@@ -4,7 +4,7 @@ export interface FieldDefinition {
   name: string;
   label: string;
   type: FieldType;
-  defaultValue: any;
+  defaultValue: unknown;
   placeholder?: string;
   required?: boolean;
   options?: { label: string; value: string }[];
@@ -80,5 +80,5 @@ export const getInitialTaskState = () => {
   return TASK_SCHEMA.reduce((acc, field) => {
     acc[field.name] = field.defaultValue;
     return acc;
-  }, {} as any);
+  }, {} as Record<string, unknown>);
 };

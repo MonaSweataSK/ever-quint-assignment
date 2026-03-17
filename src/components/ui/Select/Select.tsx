@@ -30,6 +30,7 @@ export const Select: React.FC<SelectProps> = ({
   // Sync with controlled value prop
   useEffect(() => {
     if (value !== undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedValue(value);
     }
   }, [value]);

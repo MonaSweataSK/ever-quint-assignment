@@ -8,12 +8,12 @@ const SCHEMA_HASH_ID = 'automatedSchemaHash';
 /**
  * Normalizes a task by merging it with the latest schema defaults.
  */
-const normalizeTask = (task: Record<string, any>): Task => {
+const normalizeTask = (task: Record<string, unknown>): Task => {
   const defaults = getInitialTaskState();
   return {
     ...defaults,
     ...task,
-    dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
+    dueDate: task.dueDate ? new Date(task.dueDate as string) : undefined,
     tags: Array.isArray(task.tags) ? task.tags : [],
   } as Task;
 };
@@ -41,7 +41,7 @@ export const checkAndMigrate = async (): Promise<boolean> => {
   const migrated: Task[] = [];
 
   for (const task of allTasks) {
-    const normalized = normalizeTask(task);
+    const normalized = normalizeTask(task as unknown as Record<string, unknown>);
     migrated.push(normalized);
   }
 

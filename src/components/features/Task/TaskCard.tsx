@@ -1,5 +1,5 @@
 import React from 'react';
-import type { TaskCardProps, TaskPriority } from '../../../types/Task.type';
+import type { TaskCardProps, TaskPriority, Task } from '../../../types/Task.type';
 import Tag from '../../ui/Tag/Tag';
 import { getTagColorScheme } from '../../../utils/tagColors';
 import { getSystemTags } from '../../../utils/taskTags';
@@ -52,7 +52,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   const hasAssignee = !!assignee?.trim();
   
   // Compute system tags and prepend them
-  const systemTags = getSystemTags({ status, dueDate } as any);
+  const systemTags = getSystemTags({ status, dueDate } as Task);
   const tags = [...systemTags, ...manualTags];
 
   const initials = hasAssignee 

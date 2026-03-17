@@ -23,6 +23,7 @@ export const Modal: React.FC<ModalProps> = ({
   // Handle onOpen callback and conditional rendering for animations
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShouldRender(true);
       onOpen?.();
       // Prevent scrolling on the body when modal is open

@@ -8,7 +8,7 @@ const TaskFormDemo: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTask, setActiveTask] = useState<Partial<Task> | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [submittedData, setSubmittedData] = useState<any>(null);
+  const [submittedData, setSubmittedData] = useState<{ mode: string; data: Omit<Task, 'id' | 'updatedAt' | 'createdAt'> } | null>(null);
 
   const handleOpenCreate = () => {
     setActiveTask(null);
@@ -26,7 +26,7 @@ const TaskFormDemo: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: Omit<Task, 'id' | 'updatedAt' | 'createdAt'>) => {
     console.log('Task Submitted:', data);
     setSubmittedData({ mode: activeTask ? 'Edit' : 'Create', data });
     setIsModalOpen(false);

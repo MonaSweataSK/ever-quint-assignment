@@ -5,7 +5,7 @@ import { TaskSort } from '../components/features/Board/TaskSort';
 import type { SortCriteria } from '../constants/board';
 import { TaskFilter } from '../components/features/Board/TaskFilter';
 import type { SortOrder } from '../components/ui/Sort/Sort';
-import type { TaskPriority, TaskStatus } from '../types/Task.type';
+import type { Task, TaskPriority, TaskStatus } from '../types/Task.type';
 import Modal from '../components/ui/Modal/Modal';
 import TaskForm from '../components/features/Task/TaskForm';
 import { useTaskStore } from '../store/taskStore';
@@ -46,7 +46,7 @@ const Home: React.FC = () => {
     
     // Sync URL when state changes
     useEffect(() => {
-        const params: any = {};
+        const params: Record<string, string> = {};
         if (searchQuery) params.q = searchQuery;
         if (selectedPriorities.length) params.priority = selectedPriorities.join(',');
         if (selectedStatuses.length) params.status = selectedStatuses.join(',');
@@ -70,6 +70,7 @@ const Home: React.FC = () => {
     // Sync modal state with URL
     useEffect(() => {
         if (pathname === '/task/new') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsNewTaskModalOpen(true);
             setIsViewModalOpen(false);
             setSelectedTaskId(null);
@@ -93,6 +94,7 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         if (migrationRan) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowMigrationToast(true);
         }
     }, [migrationRan]);
@@ -117,7 +119,7 @@ const Home: React.FC = () => {
         columnOrder,
     };
 
-    const handleUpdateTask = async (taskData: any) => {
+    const handleUpdateTask = async (taskData: Omit<Task, 'id' | 'updatedAt' | 'createdAt'>) => {
         if (selectedTaskId) {
             await updateTask(selectedTaskId, taskData);
             navigate({ pathname: `/task/${selectedTaskId}`, search: searchParams.toString() });
@@ -133,7 +135,7 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleCreateTask = async (taskData: any) => {
+    const handleCreateTask = async (taskData: Omit<Task, 'id' | 'updatedAt' | 'createdAt'>) => {
         await createTask(taskData);
         navigate({ pathname: '/', search: searchParams.toString() });
     };

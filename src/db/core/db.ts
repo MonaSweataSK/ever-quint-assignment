@@ -21,7 +21,7 @@ export interface AppSchema extends DBSchema {
   };
   settings: {
     key: string;
-    value: { id: string; value: any };
+    value: { id: string; value: unknown };
   };
 }
 

@@ -33,6 +33,7 @@ export const Column: React.FC<ColumnProps> = ({
 
   useEffect(() => {
     // Whenever a new global sort interaction happens, reset local overrides
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalSort(null);
   }, [globalSortVersion]);
 

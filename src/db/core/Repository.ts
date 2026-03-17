@@ -26,12 +26,14 @@ export abstract class Repository<T extends { id: string }, S extends StoreNames<
 
   async create(item: T): Promise<string> {
     const db = await this.getDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.add(this.storeName, item as any);
     return item.id;
   }
 
   async update(item: T): Promise<void> {
     const db = await this.getDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.put(this.storeName, item as any);
   }
 
