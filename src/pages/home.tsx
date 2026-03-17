@@ -12,23 +12,48 @@ import type { Task } from '../types/Task.type';
 import { useTaskStore } from '../store/taskStore';
 import Toast from '../components/ui/Toast/Toast';
 
+import { useSearchParams } from 'react-router-dom';
+
 const Home: React.FC = () => {
     const { tasks, columns, columnOrder, loadTasks, createTask, updateTask, deleteTask, moveTask, migrationRan } = useTaskStore();
+    const [searchParams, setSearchParams] = useSearchParams();
     
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>([]);
-    const [selectedStatuses, setSelectedStatuses] = useState<TaskStatus[]>([]);
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+    const [selectedPriorities, setSelectedPriorities] = useState<TaskPriority[]>(
+        (searchParams.get('priority')?.split(',') as TaskPriority[] || []).filter(Boolean)
+    );
+    const [selectedStatuses, setSelectedStatuses] = useState<TaskStatus[]>(
+        (searchParams.get('status')?.split(',') as TaskStatus[] || []).filter(Boolean)
+    );
     const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
     const [showMigrationToast, setShowMigrationToast] = useState(false);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    
+    // Initial sort from URL
+    const urlSortCriteria = searchParams.get('sortBy') as SortCriteria | null;
+    const urlSortOrder = (searchParams.get('order') as SortOrder) || 'asc';
+
     const [globalSort, setGlobalSort] = useState<{ criteria: SortCriteria | null; order: SortOrder; version: number }>({
-        criteria: null,
-        order: 'asc',
+        criteria: urlSortCriteria,
+        order: urlSortOrder,
         version: 0,
     });
-    const [isGlobalIndicatorActive, setIsGlobalIndicatorActive] = useState(false);
+    const [isGlobalIndicatorActive, setIsGlobalIndicatorActive] = useState(!!urlSortCriteria);
+    
+    // Sync URL when state changes
+    useEffect(() => {
+        const params: any = {};
+        if (searchQuery) params.q = searchQuery;
+        if (selectedPriorities.length) params.priority = selectedPriorities.join(',');
+        if (selectedStatuses.length) params.status = selectedStatuses.join(',');
+        if (globalSort.criteria) {
+            params.sortBy = globalSort.criteria;
+            params.order = globalSort.order;
+        }
+        setSearchParams(params, { replace: true });
+    }, [searchQuery, selectedPriorities, selectedStatuses, globalSort, setSearchParams]);
 
     useEffect(() => {
         loadTasks();
