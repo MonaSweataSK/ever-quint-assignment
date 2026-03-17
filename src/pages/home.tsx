@@ -158,10 +158,10 @@ const Home: React.FC = () => {
                                     Workspace
                                 </span>
                                 <a 
-                                    href="/orm-demo" 
-                                    className="text-[10px] font-bold text-gray-400 hover:text-indigo-600 uppercase tracking-widest mt-1 block border-l border-gray-200 pl-2 ml-1"
+                                    href="/playground" 
+                                    className="px-4 py-2 text-xs font-black text-gray-400 hover:text-indigo-600 uppercase tracking-widest transition-colors"
                                 >
-                                    ORM Demo
+                                    Playground
                                 </a>
                             </div>
                         </div>

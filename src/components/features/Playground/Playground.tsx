@@ -7,7 +7,11 @@ import type { User } from '../../../types/User.type';
 import type { Tag } from '../../../types/Tag.type';
 import Button from '../../ui/Button/Button';
 
-export const ORMDemo: React.FC = () => {
+/**
+ * A playground for testing the IndexedDB ORM and repository layer.
+ * Allows running automated tests and manual database clearing.
+ */
+export const Playground: React.FC = () => {
   const [logs, setLogs] = useState<string[]>([]);
   const [stats, setStats] = useState({ tasks: 0, users: 0, tags: 0 });
 
@@ -106,7 +110,7 @@ export const ORMDemo: React.FC = () => {
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight">IDB ORM Debugger</h2>
+        <h2 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight italic">Storage Playground</h2>
         <div className="flex gap-2">
           <Button onClick={runTest} variant="primary" label="Run Test" />
           <Button onClick={clearDB} variant="secondary" label="Clear Data" className="text-red-600 border-red-100 hover:bg-red-50" />
@@ -148,3 +152,5 @@ export const ORMDemo: React.FC = () => {
     </div>
   );
 };
+
+export default Playground;

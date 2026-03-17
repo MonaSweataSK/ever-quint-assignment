@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
-import { ORMDemo } from './components/features/ORM/ORMDemo';
+import Playground from './components/features/Playground/Playground';
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
         <Route path="/task/new" element={<Home />} />
         <Route path="/task/:taskId" element={<Home />} />
         <Route path="/task/:taskId/edit" element={<Home />} />
-        <Route path="/orm-demo" element={<ORMDemo />} />
+        <Route path="/playground" element={<Playground />} />
       </Routes>
     </BrowserRouter>
   );
