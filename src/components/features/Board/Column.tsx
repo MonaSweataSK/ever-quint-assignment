@@ -11,7 +11,6 @@ interface ColumnProps {
   title: string;
   tasks: Task[];
   onTaskClick?: (taskId: string) => void;
-  onTaskDelete?: (taskId: string) => void;
   globalSortCriteria: SortCriteria | null;
   globalSortOrder: SortOrder;
   globalSortVersion: number;
@@ -25,7 +24,7 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
 };
 
 export const Column: React.FC<ColumnProps> = ({
-  columnId, title, tasks, onTaskClick, onTaskDelete,
+  columnId, title, tasks, onTaskClick,
   globalSortCriteria, globalSortOrder, globalSortVersion,
   onColumnSortApplied
 }) => {
@@ -120,7 +119,7 @@ export const Column: React.FC<ColumnProps> = ({
                     }}
                     className={`${snapshot.isDragging ? 'z-50 shadow-xl scale-[1.02]' : ''}`}
                   >
-                    <TaskCard {...task} onClick={onTaskClick} onDelete={onTaskDelete} />
+                    <TaskCard {...task} onClick={onTaskClick} />
                   </div>
                 )}
               </Draggable>

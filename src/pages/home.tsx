@@ -242,19 +242,18 @@ const Home: React.FC = () => {
 
             {/* Main Content Area */}
             <main className="max-w-7xl mx-auto p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                <Board 
-                    data={boardData}
-                    onDragEnd={moveTask}
-                    searchQuery={searchQuery}
-                    selectedPriorities={selectedPriorities}
-                    selectedStatuses={selectedStatuses}
-                    onTaskClick={handleTaskClick}
-                    onTaskDelete={handleDeleteTask}
-                    globalSortCriteria={globalSort.criteria}
-                    globalSortOrder={globalSort.order}
-                    globalSortVersion={globalSort.version}
-                    onColumnSortApplied={handleColumnSortApplied}
-                />
+                    <Board 
+                        data={boardData}
+                        onDragEnd={moveTask}
+                        searchQuery={searchQuery}
+                        selectedPriorities={selectedPriorities}
+                        selectedStatuses={selectedStatuses}
+                        onTaskClick={handleTaskClick}
+                        globalSortCriteria={globalSort.criteria}
+                        globalSortOrder={globalSort.order}
+                        globalSortVersion={globalSort.version}
+                        onColumnSortApplied={handleColumnSortApplied}
+                    />
             </main>
 
             <Modal

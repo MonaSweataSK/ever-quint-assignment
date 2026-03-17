@@ -28,6 +28,4 @@ export interface TaskCardProps
   className?: string;
   /** Callback when the card is clicked. Second param is true if editing is requested. */
   onClick?: (id: string, isEditing?: boolean) => void;
-  /** Callback when the delete button is clicked */
-  onDelete?: (id: string) => void;
 }
