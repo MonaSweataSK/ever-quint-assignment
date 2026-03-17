@@ -25,6 +25,12 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   className = '',
 }) => {
   const [isEditing, setIsEditing] = useState(initialIsEditing);
+  
+  // Sync with prop if it changes from outside
+  React.useEffect(() => {
+    setIsEditing(initialIsEditing);
+  }, [initialIsEditing]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<any>(() => {
     const initialState = getInitialTaskState();
