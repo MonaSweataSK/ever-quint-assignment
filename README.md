@@ -1,7 +1,5 @@
 # EverQuint: Task Management Assignment
 
-EverQuint is a premium, robust, and offline-first task management application built from the ground up. Inspired by industry leaders like **Jira** and **Linear**, the primary objective of this project was to construct a scalable Kanban architecture from scratch, highlighting fundamental engineering principles over reliance on heavy, pre-built template libraries.
-
 ---
 
 [📖 **Click here for the Full Visual User Guide & App Walkthrough Demo**](./docs/guide.md)
@@ -114,17 +112,3 @@ Prerequisites: `Node.js` (v18+)
    npm run build
    ```
 
----
-
-## 🖼️ Visual Progression & Walkthrough
-
-Below is a look at the application's key interfaces:
-
-### 1. The Main Task Board (Jira Inspired)
-![Board View](/Users/eramalingam/.gemini/antigravity/brain/22eb1960-7760-4938-88e4-f967365981b3/media__1773764774502.png)
-
-### 2. Task Editing & Creation Overlay
-![Task Modal](/Users/eramalingam/.gemini/antigravity/brain/22eb1960-7760-4938-88e4-f967365981b3/media__1773766033104.png)
-
-### 3. The Faker.js Playground (ORM Debugger)
-![Playground View](/Users/eramalingam/.gemini/antigravity/brain/22eb1960-7760-4938-88e4-f967365981b3/media__1773767677916.png)
