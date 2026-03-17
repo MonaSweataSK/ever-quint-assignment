@@ -7,6 +7,7 @@ interface FormFieldProps {
   children: React.ReactNode;
   className?: string;
   htmlFor?: string;
+  onDoubleClick?: () => void;
 }
 
 /**
@@ -19,9 +20,13 @@ const FormField: React.FC<FormFieldProps> = ({
   children,
   className = '',
   htmlFor,
+  onDoubleClick,
 }) => {
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`}>
+    <div 
+      className={`flex flex-col gap-1.5 ${className}`}
+      onDoubleClick={onDoubleClick}
+    >
       {label && (
         <label 
           htmlFor={htmlFor}

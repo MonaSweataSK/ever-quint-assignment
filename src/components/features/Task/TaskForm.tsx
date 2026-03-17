@@ -189,6 +189,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             htmlFor={field.name}
             required={field.required}
             error={errors[field.name]}
+            onDoubleClick={() => !isEditing && setIsEditing(true)}
           >
             {renderField(field)}
           </FormField>
