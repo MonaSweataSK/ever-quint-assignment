@@ -153,13 +153,13 @@ const Home: React.FC = () => {
                             <h1 className="text-xl font-bold text-gray-900 tracking-tight leading-none">
                                 EverQuint
                             </h1>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest mt-1 block">
+                            <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest block">
                                     Workspace
                                 </span>
                                 <a 
                                     href="/playground" 
-                                    className="px-4 py-2 text-xs font-black text-gray-400 hover:text-indigo-600 uppercase tracking-widest transition-colors"
+                                    className="text-[10px] font-bold text-gray-400 hover:text-indigo-500 uppercase tracking-widest transition-colors"
                                 >
                                     Playground
                                 </a>
