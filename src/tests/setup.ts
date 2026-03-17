@@ -13,7 +13,7 @@ vi.mock('idb', () => ({
 }));
 
 // Mock ResizeObserver which is often needed for RTL/DND tests
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
