@@ -17,6 +17,8 @@ export interface TagEditorProps {
   required?: boolean;
   /** Whether the component is disabled */
   disabled?: boolean;
+  /** Array of existing tags in the workspace for suggestions */
+  suggestions?: string[];
   /** Additional CSS classes */
   className?: string;
 }

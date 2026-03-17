@@ -14,27 +14,54 @@ export const TagEditor: React.FC<TagEditorProps> = ({
   error,
   required,
   disabled,
+  suggestions = [],
   className = '',
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  const filteredSuggestions = React.useMemo(() => {
+    if (!inputValue.trim()) return [];
+    return suggestions.filter(
+      (s) => 
+        s.toLowerCase().includes(inputValue.toLowerCase()) && 
+        !tags.some(t => t.toLowerCase() === s.toLowerCase())
+    ).slice(0, 5);
+  }, [suggestions, inputValue, tags]);
+
+  const addTag = (val: string) => {
+    const trimmedVal = val.trim();
+    if (trimmedVal && !tags.some(t => t.toLowerCase() === trimmedVal.toLowerCase())) {
+      if (!limit || tags.length < limit) {
+        onChange([...tags, trimmedVal]);
+        setInputValue('');
+        setHighlightedIndex(-1);
+      }
+    }
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (disabled) return;
 
     if (e.key === 'Enter') {
       e.preventDefault();
-      const val = inputValue.trim();
-
-      if (val && !tags.some(t => t.toLowerCase() === val.toLowerCase())) {
-        if (!limit || tags.length < limit) {
-          onChange([...tags, val]);
-          setInputValue('');
-        }
+      if (highlightedIndex >= 0 && highlightedIndex < filteredSuggestions.length) {
+        addTag(filteredSuggestions[highlightedIndex]);
+      } else {
+        addTag(inputValue);
       }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev < filteredSuggestions.length - 1 ? prev + 1 : prev));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex((prev) => (prev > -1 ? prev - 1 : prev));
+    } else if (e.key === 'Escape') {
+      setHighlightedIndex(-1);
     } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
-      // Remove last tag if backspace is pressed on empty input
       const newTags = [...tags];
       newTags.pop();
       onChange(newTags);
@@ -62,7 +89,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
   `;
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
+    <div className="flex flex-col gap-1.5 w-full relative">
       {label && (
         <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
           {label}
@@ -74,7 +101,12 @@ export const TagEditor: React.FC<TagEditorProps> = ({
         className={containerClasses}
         onClick={handleContainerClick}
         onFocus={() => !disabled && setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onBlur={(e) => {
+          // Prevent blur if clicking on a suggestion
+          if (suggestionsRef.current?.contains(e.relatedTarget as Node)) return;
+          setIsFocused(false);
+          setHighlightedIndex(-1);
+        }}
       >
         {/* Render Tags */}
         {tags.map((tag) => (
@@ -106,7 +138,10 @@ export const TagEditor: React.FC<TagEditorProps> = ({
           ref={inputRef}
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            setHighlightedIndex(-1);
+          }}
           onKeyDown={handleKeyDown}
           placeholder={tags.length === 0 ? placeholder : ''}
           disabled={disabled || (limit ? tags.length >= limit : false)}
@@ -126,9 +161,35 @@ export const TagEditor: React.FC<TagEditorProps> = ({
         )}
       </div>
 
+      {/* Suggestion Dropdown */}
+      {isFocused && filteredSuggestions.length > 0 && (
+        <div 
+          ref={suggestionsRef}
+          className="absolute z-[60] left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+        >
+          <div className="p-1">
+            {filteredSuggestions.map((suggestion, index) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => addTag(suggestion)}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                className={`
+                  w-full text-left px-3 py-2 text-sm rounded-md transition-colors
+                  ${highlightedIndex === index ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}
+                `}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {error && <p className="text-xs font-medium text-rose-500 mt-0.5">{error}</p>}
     </div>
   );
 };
 
 export default TagEditor;
+

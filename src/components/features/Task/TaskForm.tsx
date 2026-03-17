@@ -8,6 +8,7 @@ import TagEditor from '../../ui/TagEditor/TagEditor';
 import Form from '../../ui/Form/Form';
 import FormField from '../../ui/Form/FormField';
 import { TASK_SCHEMA, getInitialTaskState } from '../../../constants/taskSchema';
+import { useTaskStore } from '../../../store/taskStore';
 
 interface TaskFormProps {
   initialTask?: Partial<Task>;
@@ -26,6 +27,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   loading = false,
   className = '',
 }) => {
+  const { tasks } = useTaskStore();
   const [isEditing, setIsEditing] = useState(initialIsEditing);
   const [users, setUsers] = useState<User[]>([]);
   
@@ -139,11 +141,17 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       case 'date':
         return <Input {...commonProps} type="date" />;
       case 'tags':
+        // Get unique existing tags from all tasks
+        const existingTags = Array.from(
+          new Set(Object.values(tasks).flatMap(t => t.tags))
+        ).sort();
+
         return (
           <TagEditor
             tags={formData.tags || []}
             onChange={(tags) => setFormData((prev: any) => ({ ...prev, tags }))}
             disabled={!isEditing}
+            suggestions={existingTags}
           />
         );
       default:
@@ -151,6 +159,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           return (
             <Select
               {...commonProps}
+              searchable
               onChange={(val) => handleSelectChange(field.name, val)}
               options={[
                 { label: 'Unassigned', value: '', key: 'unassigned' },
