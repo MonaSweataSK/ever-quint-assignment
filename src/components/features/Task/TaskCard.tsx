@@ -43,13 +43,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   updatedAt,
   className = '',
   onClick,
+  onDelete,
 }) => {
   const priorityInfo = priorityConfig[priority];
-  const initials = assignee?.trim() 
+  const hasAssignee = !!assignee?.trim();
+  const initials = hasAssignee 
     ? assignee
       .split(' ')
       .filter(Boolean)
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2)
@@ -67,24 +69,40 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         ${className}
       `}
     >
-      {/* ── Header: title + priority ── */}
+      {/* ── Header: title + priority + actions ── */}
       <div className="flex items-start justify-between gap-2">
         <h3 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">
           {title}
         </h3>
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick?.(id, true);
-            }}
-            className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-            title="Edit Task"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </button>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick?.(id, true);
+              }}
+              className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+              title="Edit Task"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.confirm('Delete this task?')) {
+                  onDelete?.(id);
+                }
+              }}
+              className="p-1 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+              title="Delete Task"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
           <Tag
             label={priorityInfo.label}
             variant={priorityInfo.variant}
@@ -106,10 +124,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       {/* ── Footer: assignee + relative time ── */}
       <div className="flex items-center justify-between pt-1 border-t border-gray-100">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+          <span className={`w-6 h-6 rounded-full text-[10px] font-bold flex items-center justify-center shadow-sm ${hasAssignee ? 'bg-gradient-to-br from-violet-500 to-indigo-500 text-white' : 'bg-gray-100 text-gray-400'}`}>
             {initials}
           </span>
-          <span className="text-xs text-gray-600 font-medium">{assignee}</span>
+          <span className={`text-xs font-medium ${hasAssignee ? 'text-gray-600' : 'text-gray-400 italic'}`}>
+            {hasAssignee ? assignee : 'No Assignee'}
+          </span>
         </div>
         <span className="text-[11px] text-gray-400 font-medium">
           {getRelativeTime(updatedAt)}

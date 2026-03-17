@@ -225,6 +225,7 @@ const Home: React.FC = () => {
                     selectedPriorities={selectedPriorities}
                     selectedStatuses={selectedStatuses}
                     onTaskClick={handleTaskClick}
+                    onTaskDelete={handleDeleteTask}
                     globalSortCriteria={globalSort.criteria}
                     globalSortOrder={globalSort.order}
                     globalSortVersion={globalSort.version}

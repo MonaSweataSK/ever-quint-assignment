@@ -14,6 +14,7 @@ interface BoardProps {
   selectedPriorities: TaskPriority[];
   selectedStatuses: TaskStatus[];
   onTaskClick?: (taskId: string) => void;
+  onTaskDelete?: (taskId: string) => void;
   globalSortCriteria: SortCriteria | null;
   globalSortOrder: SortOrder;
   globalSortVersion: number;
@@ -27,6 +28,7 @@ export const Board: React.FC<BoardProps> = ({
   selectedPriorities,
   selectedStatuses,
   onTaskClick,
+  onTaskDelete,
   globalSortCriteria,
   globalSortOrder,
   globalSortVersion,
@@ -65,6 +67,7 @@ export const Board: React.FC<BoardProps> = ({
               title={column.title}
               tasks={tasks}
               onTaskClick={onTaskClick}
+              onTaskDelete={onTaskDelete}
               globalSortCriteria={globalSortCriteria}
               globalSortOrder={globalSortOrder}
               globalSortVersion={globalSortVersion}

@@ -27,7 +27,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
       e.preventDefault();
       const val = inputValue.trim();
 
-      if (val && !tags.includes(val)) {
+      if (val && !tags.some(t => t.toLowerCase() === val.toLowerCase())) {
         if (!limit || tags.length < limit) {
           onChange([...tags, val]);
           setInputValue('');
