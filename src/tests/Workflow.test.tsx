@@ -32,8 +32,8 @@ describe('Workflow: Task Creation', () => {
     vi.clearAllMocks();
     (taskRepo.getAll as any).mockResolvedValue([]);
     vi.spyOn(userRepo, 'getAll').mockResolvedValue([
-      { id: '1', name: 'Ram', email: 'ram@everquint.com', createdAt: new Date() },
-      { id: '2', name: 'Mona', email: 'mona@everquint.com', createdAt: new Date() }
+      { id: '1', name: 'Ram', email: 'ram@everquint.com', createdAt: new Date(), updatedAt: new Date() },
+      { id: '2', name: 'Mona', email: 'mona@everquint.com', createdAt: new Date(), updatedAt: new Date() }
     ]);
     // Reset store before each test
     useTaskStore.setState({

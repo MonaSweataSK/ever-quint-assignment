@@ -8,7 +8,6 @@ import type { SortOrder } from '../components/ui/Sort/Sort';
 import type { TaskPriority, TaskStatus } from '../types/Task.type';
 import Modal from '../components/ui/Modal/Modal';
 import TaskForm from '../components/features/Task/TaskForm';
-import type { Task } from '../types/Task.type';
 import { useTaskStore } from '../store/taskStore';
 import Toast from '../components/ui/Toast/Toast';
 
@@ -139,7 +138,7 @@ const Home: React.FC = () => {
         navigate({ pathname: '/', search: searchParams.toString() });
     };
 
-    const selectedTask = selectedTaskId ? tasks[selectedTaskId] : null;
+
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
@@ -281,7 +280,7 @@ const Home: React.FC = () => {
                     <div className="flex items-center gap-2 pr-4">
                         {!isEditing && (
                             <button
-                                onClick={() => setIsEditing(true)}
+                                onClick={() => navigate({ pathname: `/task/${selectedTaskId}/edit`, search: searchParams.toString() })}
                                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                             >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -291,7 +290,7 @@ const Home: React.FC = () => {
                             </button>
                         )}
                         <button
-                            onClick={handleDeleteTask}
+                            onClick={() => selectedTaskId && handleDeleteTask(selectedTaskId)}
                             disabled={isEditing}
                             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-rose-600 rounded-lg transition-colors ${isEditing ? 'opacity-40 cursor-not-allowed bg-transparent' : 'hover:bg-rose-50'}`}
                         >
@@ -307,7 +306,7 @@ const Home: React.FC = () => {
                     <TaskForm 
                         initialTask={boardData.tasks[selectedTaskId]}
                         onSubmit={handleUpdateTask}
-                        onCancel={() => setIsEditing(false)}
+                        onCancel={() => navigate({ pathname: `/task/${selectedTaskId}`, search: searchParams.toString() })}
                         isEditing={isEditing}
                     />
                 )}

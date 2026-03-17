@@ -30,10 +30,10 @@ describe('UI Behavior: Task Filtering', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(taskRepo, 'getAll').mockResolvedValue(mockTasks);
+    vi.spyOn(taskRepo, 'getAll').mockResolvedValue(Object.values(mockTasks));
     vi.spyOn(userRepo, 'getAll').mockResolvedValue([
-      { id: '1', name: 'Ram', email: 'ram@everquint.com', createdAt: new Date() },
-      { id: '2', name: 'Mona', email: 'mona@everquint.com', createdAt: new Date() }
+      { id: '1', name: 'Ram', email: 'ram@everquint.com', createdAt: new Date(), updatedAt: new Date() },
+      { id: '2', name: 'Mona', email: 'mona@everquint.com', createdAt: new Date(), updatedAt: new Date() }
     ]);
   });
 
