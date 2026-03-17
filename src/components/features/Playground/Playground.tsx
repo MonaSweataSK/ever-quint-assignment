@@ -59,12 +59,16 @@ export const Playground: React.FC = () => {
       const numTags = faker.number.int({ min: 1, max: 3 });
       
       for (let i = 0; i < numTags; i++) {
-        const tagName = faker.helpers.arrayElement([
-          faker.commerce.productAdjective(),
+        const rawTagName = faker.helpers.arrayElement([
+          faker.word.adjective(),
+          faker.word.noun(),
           faker.hacker.adjective(),
           faker.color.human(),
           'Urgent', 'Bug', 'Feature', 'Refactor', 'Internal'
         ]);
+        
+        // Ensure single word by taking the first word if multiple are returned
+        const tagName = rawTagName.split(' ')[0];
         
         const tagId = faker.string.uuid();
         const tag: Tag = {
