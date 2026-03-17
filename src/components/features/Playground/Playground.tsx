@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { faker } from '@faker-js/faker';
 import { taskRepo } from '../../../db/repositories/TaskRepository';
 import { userRepo } from '../../../db/repositories/UserRepository';
@@ -13,6 +14,7 @@ import Button from '../../ui/Button/Button';
  * Allows running automated tests and manual database clearing.
  */
 export const Playground: React.FC = () => {
+  const navigate = useNavigate();
   const [logs, setLogs] = useState<string[]>([]);
   const [stats, setStats] = useState({ tasks: 0, users: 0, tags: 0 });
 
@@ -39,10 +41,11 @@ export const Playground: React.FC = () => {
       const statuses: Task['status'][] = ['todo', 'in-progress', 'done'];
 
       // 1. Create User
-      const userId = faker.string.uuid();
+      // Using userName as ID for dummy data scannability in TaskCard
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
       const userName = `${firstName} ${lastName}`;
+      const userId = userName; // Set ID as name for immediate UI feedback
       
       const user: User = {
         id: userId,
@@ -134,11 +137,23 @@ export const Playground: React.FC = () => {
 
   return (
     <div className="p-8 max-w-2xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight italic">Storage Playground</h2>
-        <div className="flex gap-2">
-          <Button onClick={runTest} variant="primary" label="Run Test" />
-          <Button onClick={clearDB} variant="secondary" label="Clear Data" className="text-red-600 border-red-100 hover:bg-red-50" />
+      <div className="flex flex-col gap-4">
+        <button 
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors group w-fit"
+        >
+          <svg className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="text-xs font-bold uppercase tracking-widest">Back to Workspace</span>
+        </button>
+
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight italic">Storage Playground</h2>
+          <div className="flex gap-2">
+            <Button onClick={runTest} variant="primary" label="Run Test" />
+            <Button onClick={clearDB} variant="secondary" label="Clear Data" className="text-red-600 border-red-100 hover:bg-red-50" />
+          </div>
         </div>
       </div>
 
