@@ -6,6 +6,7 @@ interface FormFieldProps {
   required?: boolean;
   children: React.ReactNode;
   className?: string;
+  htmlFor?: string;
 }
 
 /**
@@ -17,11 +18,15 @@ const FormField: React.FC<FormFieldProps> = ({
   required,
   children,
   className = '',
+  htmlFor,
 }) => {
   return (
     <div className={`flex flex-col gap-1.5 ${className}`}>
       {label && (
-        <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
+        <label 
+          htmlFor={htmlFor}
+          className="text-sm font-semibold text-gray-700 flex items-center gap-1"
+        >
           {label}
           {required && <span className="text-rose-500 font-bold">*</span>}
         </label>

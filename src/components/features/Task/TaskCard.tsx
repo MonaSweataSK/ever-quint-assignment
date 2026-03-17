@@ -45,12 +45,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onClick,
 }) => {
   const priorityInfo = priorityConfig[priority];
-  const initials = assignee
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = assignee?.trim() 
+    ? assignee
+      .split(' ')
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+    : '?';
 
   return (
     <article

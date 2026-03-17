@@ -59,4 +59,8 @@ export interface SelectProps {
    * Additional CSS classes
    */
   className?: string;
+  /**
+   * Unique ID for the select field
+   */
+  id?: string;
 }

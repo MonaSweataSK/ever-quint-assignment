@@ -20,6 +20,7 @@ export const Select: React.FC<SelectProps> = ({
   placeholder = 'Select an option',
   required,
   className = '',
+  id,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || defaultValue || '');
@@ -82,6 +83,7 @@ export const Select: React.FC<SelectProps> = ({
       {/* Trigger: Reusing Input component */}
       <div className="relative" onClick={handleInputClick}>
         <Input
+          id={id}
           label={label}
           required={required}
           error={error}
