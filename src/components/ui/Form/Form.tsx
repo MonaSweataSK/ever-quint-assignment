@@ -5,9 +5,7 @@ interface FormProps {
   children: React.ReactNode;
   onSubmit: (e: React.FormEvent) => void;
   onCancel?: () => void;
-  onEdit?: () => void;
   isEditing?: boolean;
-  showEditButton?: boolean;
   submitLabel?: string;
   cancelLabel?: string;
   loading?: boolean;
@@ -23,9 +21,7 @@ const Form: React.FC<FormProps> = ({
   children,
   onSubmit,
   onCancel,
-  onEdit,
   isEditing = true,
-  showEditButton = false,
   submitLabel = 'Save',
   cancelLabel = 'Cancel',
   loading = false,
@@ -41,15 +37,7 @@ const Form: React.FC<FormProps> = ({
 
       {showActions && (
         <div className={`flex items-center justify-end gap-3 pt-6 border-t border-gray-100 ${actionsClassName}`}>
-          {!isEditing && showEditButton && onEdit && (
-            <Button
-              label="Edit"
-              variant="secondary"
-              onClick={onEdit}
-              disabled={loading}
-              type="button"
-            />
-          )}
+
           
           {isEditing && (
             <>

@@ -3,6 +3,7 @@ import React from 'react';
 export interface SelectOption {
   label: string;
   value: string;
+  key?: string;
 }
 
 export interface SelectProps {

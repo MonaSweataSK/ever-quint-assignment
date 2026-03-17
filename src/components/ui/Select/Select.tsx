@@ -127,7 +127,7 @@ export const Select: React.FC<SelectProps> = ({
             <div className="p-1">
               {filteredOptions.map((option) => (
                 <button
-                  key={option.value}
+                  key={option.key || option.value}
                   type="button"
                   onClick={() => handleSelect(option)}
                   className={`

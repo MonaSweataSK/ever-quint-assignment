@@ -153,8 +153,8 @@ export const TaskForm: React.FC<TaskFormProps> = ({
               {...commonProps}
               onChange={(val) => handleSelectChange(field.name, val)}
               options={[
-                { label: 'Unassigned', value: '' },
-                ...users.map(u => ({ label: u.name, value: u.name }))
+                { label: 'Unassigned', value: '', key: 'unassigned' },
+                ...users.map(u => ({ label: u.name, value: u.name, key: u.id }))
               ]}
             />
           );
@@ -170,8 +170,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       submitLabel={initialTask ? 'Update Task' : 'Create Task'}
       loading={isSubmitting || loading}
       isEditing={isEditing}
-      onEdit={() => setIsEditing(true)}
-      showEditButton={initialTask !== undefined}
       className={className}
     >
       <div className="space-y-6">
