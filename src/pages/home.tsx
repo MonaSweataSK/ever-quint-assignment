@@ -53,6 +53,15 @@ const Home: React.FC = () => {
             params.order = globalSort.order;
         }
         setSearchParams(params, { replace: true });
+
+        // Update document title for better UX
+        const filterTitle = [
+            searchQuery ? `Searching "${searchQuery}"` : null,
+            selectedPriorities.length ? `Priorities: ${selectedPriorities.join(', ')}` : null,
+            selectedStatuses.length ? `Statuses: ${selectedStatuses.join(', ')}` : null,
+        ].filter(Boolean).join(' | ');
+
+        document.title = filterTitle ? `${filterTitle} - EverQuint` : 'EverQuint Workspce';
     }, [searchQuery, selectedPriorities, selectedStatuses, globalSort, setSearchParams]);
 
     useEffect(() => {
