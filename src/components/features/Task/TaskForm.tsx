@@ -53,7 +53,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<any>(() => {
+  const [formData, setFormData] = useState<Partial<Task>>(() => {
     const initialState = getInitialTaskState();
     if (initialTask) {
       return {
@@ -69,9 +69,9 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev: any) => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[name];
         return newErrors;
@@ -80,13 +80,14 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
     TASK_SCHEMA.forEach(field => {
-      if (field.required && !formData[field.name]?.toString().trim()) {
+      const value = (formData as Record<string, unknown>)[field.name];
+      if (field.required && !(value?.toString().trim())) {
         newErrors[field.name] = `${field.label} is required`;
       }
     });
@@ -115,11 +116,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     }
   };
 
-  const renderField = (field: any) => {
+  // We can infer the type of 'field' from the TASK_SCHEMA elements
+  const renderField = (field: typeof TASK_SCHEMA[number]) => {
+    const value = (formData as Record<string, unknown>)[field.name];
     const commonProps = {
       name: field.name,
       id: field.name,
-      value: formData[field.name] || '',
+      value: value as string | undefined || '',
       onChange: handleChange,
       disabled: !isEditing,
       placeholder: field.placeholder,
@@ -171,7 +174,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             )}
             <TagEditor
               tags={formData.tags || []}
-              onChange={(tags) => setFormData((prev: any) => ({ ...prev, tags }))}
+              onChange={(tags) => setFormData((prev) => ({ ...prev, tags }))}
               disabled={!isEditing}
               suggestions={existingTags}
             />
