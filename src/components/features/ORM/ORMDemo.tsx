@@ -80,6 +80,7 @@ export const ORMDemo: React.FC = () => {
         priority: priorities[Math.floor(Math.random() * priorities.length)],
         dueDate: new Date(Date.now() + Math.random() * 86400000 * 7), // within 7 days
         assignee: userId,
+        category: 'Testing',
         tags: [tagId],
         createdAt: new Date(),
         updatedAt: new Date(),

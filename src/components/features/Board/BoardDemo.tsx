@@ -15,6 +15,7 @@ const initialBoardData: BoardData = {
       createdAt: new Date(),
       updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2h ago
       tags: ['Project', 'Setup'],
+      category: 'Development',
     },
     'task-2': {
       id: 'task-2',
@@ -27,6 +28,7 @@ const initialBoardData: BoardData = {
       createdAt: new Date(),
       updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1d ago
       tags: ['Design', 'Docs'],
+      category: 'Design',
     },
     'task-3': {
       id: 'task-3',
@@ -39,6 +41,7 @@ const initialBoardData: BoardData = {
       createdAt: new Date(),
       updatedAt: new Date(Date.now() - 1000 * 60 * 45), // 45m ago
       tags: ['Auth', 'Frontend'],
+      category: 'Development',
     },
     'task-4': {
       id: 'task-4',
@@ -51,6 +54,7 @@ const initialBoardData: BoardData = {
       createdAt: new Date(),
       updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5h ago
       tags: ['Backend', 'Database'],
+      category: 'Development',
     },
     'task-5': {
       id: 'task-5',
@@ -63,19 +67,12 @@ const initialBoardData: BoardData = {
       createdAt: new Date(),
       updatedAt: new Date(Date.now() - 1000 * 60 * 15), // 15m ago
       tags: ['DevOps'],
+      category: 'Infrastructure',
     },
   },
   columns: {
-    'backlog': {
-      id: 'backlog',
-      title: 'Backlog',
-      taskIds: ['task-1', 'task-2'],
-    },
-    'in-progress': {
-      id: 'in-progress',
-      title: 'In Progress',
-      taskIds: ['task-3', 'task-4'],
-    },
+// ...
+// (Skipping middle lines for brevity in TargetContent matching)
     'done': {
       id: 'done',
       title: 'Done',
@@ -97,10 +94,13 @@ export const BoardDemo: React.FC = () => {
 
       <Board 
         data={initialBoardData} 
-        onDataChange={() => {}}
+        onDragEnd={() => {}}
         searchQuery="" 
         selectedPriorities={[]}
         selectedStatuses={[]}
+        globalSortCriteria={null}
+        globalSortOrder="desc"
+        globalSortVersion={0}
       />
     </section>
   );
