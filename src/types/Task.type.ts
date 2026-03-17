@@ -26,6 +26,6 @@ export interface TaskCardProps
   extends Pick<Task, 'id' | 'title' | 'priority' | 'assignee' | 'tags' | 'updatedAt'> {
   /** Additional CSS classes */
   className?: string;
-  /** Callback when the card is clicked */
-  onClick?: (id: string) => void;
+  /** Callback when the card is clicked. Second param is true if editing is requested. */
+  onClick?: (id: string, isEditing?: boolean) => void;
 }

@@ -74,9 +74,9 @@ const Home: React.FC = () => {
         setIsGlobalIndicatorActive(false);
     };
 
-    const handleTaskClick = (taskId: string) => {
+    const handleTaskClick = (taskId: string, editMode: boolean = false) => {
         setSelectedTaskId(taskId);
-        setIsEditing(false);
+        setIsEditing(editMode);
         setIsViewModalOpen(true);
     };
 
