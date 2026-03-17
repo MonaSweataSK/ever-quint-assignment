@@ -106,6 +106,8 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       };
 
       await onSubmit(taskData as Omit<Task, 'id' | 'updatedAt' | 'createdAt'>);
+      // Reset local edit state if we entered it via double-click
+      setIsEditing(initialIsEditing);
     } catch (error) {
       console.error('Failed to save task:', error);
     } finally {
