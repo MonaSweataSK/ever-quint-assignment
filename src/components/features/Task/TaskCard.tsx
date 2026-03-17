@@ -2,6 +2,7 @@ import React from 'react';
 import type { TaskCardProps, TaskPriority } from '../../../types/Task.type';
 import Tag from '../../ui/Tag/Tag';
 import { getTagColorScheme } from '../../../utils/tagColors';
+import { getSystemTags } from '../../../utils/taskTags';
 
 /**
  * Computes a human-readable relative time string from a given date.
@@ -40,13 +41,20 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   title,
   priority,
   assignee,
-  tags,
+  tags: manualTags,
+  status,
+  dueDate,
   updatedAt,
   className = '',
   onClick,
 }) => {
   const priorityInfo = priorityConfig[priority];
   const hasAssignee = !!assignee?.trim();
+  
+  // Compute system tags and prepend them
+  const systemTags = getSystemTags({ status, dueDate } as any);
+  const tags = [...systemTags, ...manualTags];
+
   const initials = hasAssignee 
     ? assignee
       .split(' ')

@@ -5,10 +5,13 @@ import { userRepo } from '../../../db/repositories/UserRepository';
 import Input from '../../ui/Input/Input';
 import Select from '../../ui/Select/Select';
 import TagEditor from '../../ui/TagEditor/TagEditor';
+import Tag from '../../ui/Tag/Tag';
+import { getTagColorScheme } from '../../../utils/tagColors';
 import Form from '../../ui/Form/Form';
 import FormField from '../../ui/Form/FormField';
 import { TASK_SCHEMA, getInitialTaskState } from '../../../constants/taskSchema';
 import { useTaskStore } from '../../../store/taskStore';
+import { getSystemTags } from '../../../utils/taskTags';
 
 interface TaskFormProps {
   initialTask?: Partial<Task>;
@@ -141,18 +144,36 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       case 'date':
         return <Input {...commonProps} type="date" />;
       case 'tags':
-        // Get unique existing tags from all tasks
+        // Get unique existing tags from all tasks for suggestions
         const existingTags = Array.from(
           new Set(Object.values(tasks).flatMap(t => t.tags))
         ).sort();
 
+        // Calculate system tags for the current form state
+        const systemTags = getSystemTags(formData as Task);
+
         return (
-          <TagEditor
-            tags={formData.tags || []}
-            onChange={(tags) => setFormData((prev: any) => ({ ...prev, tags }))}
-            disabled={!isEditing}
-            suggestions={existingTags}
-          />
+          <div className="space-y-3">
+            {systemTags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-1">
+                {systemTags.map(tag => (
+                  <Tag 
+                    key={tag} 
+                    label={tag} 
+                    variant={getTagColorScheme(tag)} 
+                    size="sm" 
+                    dot
+                  />
+                ))}
+              </div>
+            )}
+            <TagEditor
+              tags={formData.tags || []}
+              onChange={(tags) => setFormData((prev: any) => ({ ...prev, tags }))}
+              disabled={!isEditing}
+              suggestions={existingTags}
+            />
+          </div>
         );
       default:
         if (field.name === 'assignee') {
