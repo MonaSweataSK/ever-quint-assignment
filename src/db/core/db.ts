@@ -19,33 +19,46 @@ export interface AppSchema extends DBSchema {
     value: Tag;
     indexes: { 'by-name': string };
   };
+  settings: {
+    key: string;
+    value: { id: string; value: any };
+  };
 }
 
 const DB_NAME = 'ever-quint-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export const initDB = async (): Promise<IDBPDatabase<AppSchema>> => {
   return openDB<AppSchema>(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      // Tasks Store
-      const taskStore = db.createObjectStore('tasks', {
-        keyPath: 'id',
-      });
-      taskStore.createIndex('by-status', 'status');
-      taskStore.createIndex('by-priority', 'priority');
-      taskStore.createIndex('by-assignee', 'assignee');
+    upgrade(db, oldVersion) {
+      // Version 1 stores
+      if (oldVersion < 1) {
+        const taskStore = db.createObjectStore('tasks', {
+          keyPath: 'id',
+        });
+        taskStore.createIndex('by-status', 'status');
+        taskStore.createIndex('by-priority', 'priority');
+        taskStore.createIndex('by-assignee', 'assignee');
 
-      // Users Store
-      const userStore = db.createObjectStore('users', {
-        keyPath: 'id',
-      });
-      userStore.createIndex('by-email', 'email', { unique: true });
+        // Users Store
+        const userStore = db.createObjectStore('users', {
+          keyPath: 'id',
+        });
+        userStore.createIndex('by-email', 'email', { unique: true });
 
-      // Tags Store
-      const tagStore = db.createObjectStore('tags', {
-        keyPath: 'id',
-      });
-      tagStore.createIndex('by-name', 'name', { unique: true });
+        // Tags Store
+        const tagStore = db.createObjectStore('tags', {
+          keyPath: 'id',
+        });
+        tagStore.createIndex('by-name', 'name', { unique: true });
+      }
+
+      // Version 2: Settings Store
+      if (oldVersion < 2) {
+        db.createObjectStore('settings', {
+          keyPath: 'id',
+        });
+      }
     },
   });
 };
